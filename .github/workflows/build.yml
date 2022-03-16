@@ -12,4 +12,3 @@ jobs: # Specifies the section where we describe our jobs.
     steps: # Specifies the section where we describe the job's steps.
     - name: Output some string
       run: echo "Set some actual CI steps"
-head.
