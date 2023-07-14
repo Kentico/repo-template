@@ -64,7 +64,9 @@ Distributed under the MIT License. See [`LICENSE.md`](./LICENSE.md) for more inf
 <!-- SUPPORT -->
 ## Support
 
-This contribution is covered by [Kentico's 7-day bug-fix policy](https://www.kentico.com/platforms/kentico-xperience-13/roadmap/product-support-lifecycle). Please, create a new issue in this repository describing the problem or contact us at support@kentico.com. See the [Kentico home repository](https://github.com/Kentico/Home/blob/master/README.md) for more information.
+This contribution is covered by Kentico's 7-day bug-fix policy. See [`SUPPORT.md`](./SUPPORT.md) for more information.
+
+For any security issues see [`SECURITY.md`](./SECURITY.md).
 
 
 
