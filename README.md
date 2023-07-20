@@ -64,7 +64,7 @@ Distributed under the MIT License. See [`LICENSE.md`](./LICENSE.md) for more inf
 <!-- SUPPORT -->
 ## Support
 
-This contribution is covered by Kentico's 7-day bug-fix policy. See [`SUPPORT.md`](./SUPPORT.md) for more information.
+This contribution has __Full support by 7-day bug-fix policy__ / __Kentico Labs limited support__. See [`SUPPORT.md`](./SUPPORT.md) for more information.
 
 For any security issues see [`SECURITY.md`](./SECURITY.md).
 
