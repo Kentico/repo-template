@@ -34,12 +34,10 @@ _Below is an example of how you can instruct your audience on installing and set
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](./Documentation.md)_
-
 <!-- CONTRIBUTING -->
 ## Contributing
 
-For Contributing please see  <a href="./CONTRIBUTING.md">`CONTRIBUTING.md`</a> for more information.
+For Contributing please see [`CONTRIBUTING.md`](https://github.com/Kentico/.github/blob/main/CONTRIBUTING.md) for more information and follow the [`CODE_OF_CONDUCT`](https://github.com/Kentico/.github/blob/main/CODE_OF_CONDUCT.md).
 
 ### Requirements
 
@@ -53,6 +51,8 @@ Distributed under the MIT License. See [`LICENSE.md`](./LICENSE.md) for more inf
 <!-- SUPPORT -->
 ## Support
 
-This contribution has __Full support by 7-day bug-fix policy__ / __Kentico Labs limited support__. See [`SUPPORT.md`](./SUPPORT.md) for more information.
+This contribution has **Full support by 7-day bug-fix policy** / **Kentico Labs limited support**.
 
-For any security issues see [`SECURITY.md`](./SECURITY.md).
+See [`SUPPORT.md`](https://github.com/Kentico/.github/blob/main/SUPPORT.md#full-support) for more information.
+
+For any security issues see [`SECURITY.md`](https://github.com/Kentico/.github/blob/main/SECURITY.md).
