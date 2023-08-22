@@ -1,7 +1,7 @@
 name: "$(Build.DefinitionName) #$(Build.BuildId)"
 
-trigger:
-  - main
+trigger: none # Manual Publish
+pr: none # GitHub Actions handle PRs
 
 parameters:
   - name: AgentPoolName
@@ -29,9 +29,6 @@ stages:
           ${{ if ne(length(parameters.AgentName), 1) }}:
             demands:
               - Agent.Name -equals ${{ parameters.AgentName }}
-
-        workspace:
-          clean: resources
 
         variables:
           - group: 14.0 Authenticode signature parameters
@@ -95,18 +92,12 @@ stages:
                 demands:
                   - Agent.Name -equals ${{ parameters.AgentName }}
 
-            workspace:
-              clean: resources
-
             environment: integrations-release-nuget
             strategy:
               runOnce:
                 deploy:
                   steps:
                     - checkout: none
-
-                    - download: current
-                      displayName: Download Artifacts
 
                     - task: NuGetToolInstaller@1
                       displayName: Install latest nuget.exe
@@ -121,6 +112,7 @@ stages:
                       displayName: NuGet push
                       inputs:
                         command: push
-                        packagesToPush: $(Pipeline.Workspace)/**/*.nupkg
+                        packagesToPush: $(Pipeline.Workspace)/artifact/*.nupkg
                         nuGetFeedType: external
                         publishFeedCredentials: nuget.org
+                        allowPackageConflicts: true
