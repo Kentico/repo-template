@@ -18,16 +18,15 @@
 
 ---This matrix explains which versions of the library are compatible with different versions of Xperience by Kentico---
 
-| Xperience Version   | Library Version   |
-| ------------------- | ----------------- |
-| >= 27.0.0           | Not yet supported |
-| >= 26.2.0, < 27.0.0 | x.x.x             |
+| Xperience Version | Library Version |
+| ----------------- | --------------- |
+| >= 28.1.0         | 1.0.0           |
 
 ### Dependencies
 
 ---These are all the dependencies required to use (not build) the library---
 
-- [ASP.NET Core 6.0](https://dotnet.microsoft.com/en-us/download)
+- [ASP.NET Core 8.0](https://dotnet.microsoft.com/en-us/download)
 - [Xperience by Kentico](https://docs.xperience.io/xp/changelog)
 
 ## Package Installation
