@@ -22,7 +22,7 @@ resources:
 
   containers:
     - container: Windows
-      image: base/mcr-servercore-ltsc2022:latest
+      image: base/mcr-dotnet-sdk-8.0-servercore-ltsc2022:release
       endpoint: xperienceagentshub.azurecr.io
 
 variables:
@@ -52,12 +52,6 @@ stages:
             value: src/PROJECT_NAME/PROJECT_NAME.csproj
 
         steps:
-          - task: UseDotNet@2
-            displayName: Select dotnet version
-            inputs:
-              packageType: sdk
-              useGlobalJson: true
-
           - task: DotNetCoreCLI@2
             displayName: Restore dotnet tools
             inputs:
@@ -83,6 +77,8 @@ stages:
               arguments: --no-restore
             env:
               AuthenticodeClientSecret: $(AuthenticodeClientSecret)
+              # Roll-forward behavior set for AzureSignTool dotnet tool (see .config\dotnet-tools.json) which requires .Net 6.0 runtime
+              DOTNET_ROLL_FORWARD: Major
 
           - task: DotNetCoreCLI@2
             displayName: Create NuGet package
