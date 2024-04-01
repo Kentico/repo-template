@@ -21,12 +21,13 @@
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-
   "[xml]": {
     "editor.defaultFormatter": "DotJoshJohnson.xml"
   },
-
   "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "[aspnetcorerazor]": {
     "editor.defaultFormatter": "ms-dotnettools.csharp"
   },
 
@@ -35,9 +36,6 @@
   "eslint.workingDirectories": [
     "./src/Kentico.Xperience.RepoTemplate/Admin/Client"
   ],
-  "[aspnetcorerazor]": {
-    "editor.defaultFormatter": "ms-dotnettools.csharp"
-  },
 
   "files.associations": {
     ".azuredevops/**/*.yml": "azure-pipelines"
