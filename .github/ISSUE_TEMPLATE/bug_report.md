@@ -23,6 +23,9 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
+**Library Version**
+The full version of the library or integration you experienced the issue with [e.g. 3.2.2]
+
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
@@ -32,7 +35,7 @@ If applicable, add screenshots to help explain your problem.
  - Device: [e.g. iPhone6]
  - OS: [e.g. iOS8.1]
  - Browser [e.g. stock browser, safari]
- - Full Product Version [e.g. 28.4.2]
+ - Version [e.g. 22]
 
 **Additional context**
 Add any other context about the problem here.
