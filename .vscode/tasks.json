@@ -20,12 +20,14 @@
     {
       "type": "shell",
       "command": "dotnet",
-      "args": ["format"],
+      "args": [
+        "format",
+        "Kentico.Xperience.RepoTemplate.sln",
+        "--exclude",
+        "./examples/**"
+      ],
       "problemMatcher": ["$msCompile"],
       "group": "none",
-      "options": {
-        "cwd": "${workspaceFolder}/src/Kentico.Xperience.RepoTemplate/"
-      },
       "label": "dotnet: format"
     },
     {
