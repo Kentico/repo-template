@@ -6,9 +6,9 @@
 
 ### ---Library naming conventions---
 
----Repository name – use "xperience-by-kentico-\<package-name\>" for projects aimed for Xperience by Kentico and "xperience-\<package-name\>" for projects aimed for Kentico Xperience 13---
+---Repository name – use "xperience-by-kentico-\<project-name\>" for projects aimed for Xperience by Kentico and "xperience-\<project-name\>" for projects aimed for Kentico Xperience 13---
 
----Package Name – use "Xperience by Kentico - \<Package Name\>" for projects aimed for Xperience by Kentico and "Xperience - \<Package Name\>" for projects aimed for Kentico Xperience 13---
+---Package Name – use "Xperience by Kentico: \<Project Name\>" for projects aimed for Xperience by Kentico and "Xperience: \<Project Name\>" for projects aimed for Kentico Xperience 13---
 
 # ---Package Name---
 
