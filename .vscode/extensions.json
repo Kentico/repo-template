@@ -6,7 +6,7 @@
     "tintoy.msbuild-project-tools",
     "esbenp.prettier-vscode",
     "dotjoshjohnson.xml",
-    "dbaeumer.vscode-eslint",
+    "adrianwilczynski.user-secrets",
     "ms-azure-devops.azure-pipelines"
   ]
 }
