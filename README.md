@@ -1,5 +1,8 @@
 ## ---Template info---
 
+---Run the `Repository-Setup.ps1` in the root of this repository, specifying the `ProjectName` for the new project
+---ex: `.\Repository-Setup.ps1 -ProjectName Kentico.Xperience.CoolProject`
+
 ---This section contains general information about the repository template and is to be deleted before submitting a pull request with the final documentation.---
 
 ---Lines enclosed by three dashes (like this one) are placeholders and comments to be replaced with specific information or deleted completely.---
@@ -57,11 +60,11 @@ dotnet add package <library nuget package name>
 
 ---Minimal steps to get started with the library. Support the steps with helpful screenshots.---
 
----You can completely omit this section if the setup is complicated and cannot be realistically condensed into a few steps. Instead, describe everything in detail in *Usage-Guide.md*.---
+---You can completely omit this section if the setup is complicated and cannot be realistically condensed into a few steps. Instead, describe everything in detail in _Usage-Guide.md_.---
 
 ## Full Instructions
 
----Add the full instructions, guidance, and tips to the *Usage-Guide.md* file---
+---Add the full instructions, guidance, and tips to the _Usage-Guide.md_ file---
 
 View the [Usage Guide](./docs/Usage-Guide.md) for more detailed instructions.
 

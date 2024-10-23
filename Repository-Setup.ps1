@@ -1,3 +1,5 @@
+## Delete me after project setup!
+
 param (
     [string]$ProjectName
 )
@@ -12,7 +14,7 @@ $searchText = "Kentico.Xperience.RepoTemplate"
 $replaceText = "$ProjectName"
 
 $files = Get-ChildItem -Path "./" `
- -Recurse:true | Where-Object {
+ -Recurse:$true | Where-Object {
     @(".json", ".yml", ".props", ".md") -contains $_.Extension
 }
 
@@ -31,42 +33,35 @@ foreach ($file in $files) {
         Set-Content -Path $file.FullName -Value $newContent
 
         Write-Host "Replaced text in file: $($file.FullName)"
-    } else {
-        Write-Host "No match found in file: $($file.FullName)"
     }
 }
 
 # Define project directories
-$srcProjectPath = "./src/$ProjectName"
-$testProjectPath = "./tests/$ProjectName.Tests"
-$examplesProjectPath = "./examples/DancingGoat"
+$srcProjectPath = Join-Path "./src" $ProjectName
+$testProjectPath = Join-Path "./tests" "$ProjectName.Tests"
+$examplesProjectPath = Join-Path "./examples" "DancingGoat"
 
-# Create the class library project
 dotnet new classlib `
     -n $ProjectName `
-    -o $srcProjectPath
+    -o $srcProjectPath `
+    --no-restore
 Write-Host "Created class library project: $srcProjectPath"
 
-# Create the NUnit test project
 dotnet new nunit `
     -n "$ProjectName.Tests" `
-    -o $testProjectPath
+    -o $testProjectPath `
+    --no-restore
 Write-Host "Created NUnit test project: $testProjectPath"
 
-# Add reference to the src project in the test project
-dotnet add "$testProjectPath/$ProjectName.Tests.csproj" `
-    reference "$srcProjectPath/$ProjectName.csproj"
-Write-Host "Added reference from test project to class library project."
-
-# Create the Dancing Goat sample application
-dotnet new kentico-xperience-sample-mvc `
-    -n "DancingGoat" `
-    -o $examplesProjectPath --allow-scripts
+dotnet new kentico-xperience-sample-mvc -n DancingGoat -o $examplesProjectPath --no-restore --allow-scripts Yes
 Write-Host "Created Dancing Goat sample application: $examplesProjectPath"
 
-# Add reference to the src project in the Dancing Goat sample application
+dotnet add "$testProjectPath/$ProjectName.Tests.csproj" `
+    reference $srcProjectPath
+Write-Host "Added reference from test project to class library project."
+
 dotnet add "$examplesProjectPath/DancingGoat.csproj" `
-    reference "$srcProjectPath/$ProjectName.csproj"
+    reference $srcProjectPath
 Write-Host "Added reference from Dancing Goat project to class library project."
 
 dotnet new sln -n "$ProjectName"
