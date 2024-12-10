@@ -3,16 +3,8 @@ name: "CI: Build and Test"
 on:
   pull_request:
     branches: [main]
-    paths:
-      - "**.cs"
-      - "**.cshtml"
-      - "**.tsx"
-      - "**.js"
-      - "**.json"
-      - "**.csproj"
-      - "**.props"
-      - "**.targets"
-      - "**.sln"
+  push:
+    branches: [main]
 
 jobs:
   dotnet-format:
