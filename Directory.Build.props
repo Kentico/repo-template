@@ -32,7 +32,9 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <RootNamespace>Kentico.Xperience.RepoTemplate</RootNamespace>
 
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <!-- Set to false to manually control embedded assets in the assembly -->
+    <!-- This can impact things like embedded localization .resx files -->
+    <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(Configuration) == 'Release' ">
