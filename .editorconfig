@@ -2,8 +2,11 @@
 
 root = true
 
+# Windows developers can enable autocrlf to checkout in crlf and commit in lf
+# git config --global core.autocrlf true
+
 [*.cs]
-end_of_line                                                               = crlf
+end_of_line                                                               = lf
 indent_size                                                               = 4
 indent_style                                                              = space
 insert_final_newline                                                      = true
