@@ -7,7 +7,7 @@
       "path": "src/Kentico.Xperience.RepoTemplate.Admin/Client",
       "group": "build",
       "problemMatcher": [],
-      "label": "npm: install - src/Kentico.Xperience.RepoTemplate.Admin/Client",
+      "label": "npm: install - Admin/Client",
       "detail": "install dependencies from package"
     },
     {
@@ -22,7 +22,7 @@
       "command": "dotnet",
       "args": [
         "format",
-        "Kentico.Xperience.RepoTemplate.sln",
+        "Kentico.Xperience.RepoTemplate.slnx",
         "--exclude",
         "./examples/**"
       ],
@@ -43,7 +43,7 @@
       "path": "src/Kentico.Xperience.RepoTemplate.Admin/Client",
       "group": "build",
       "problemMatcher": [],
-      "label": "npm: build - src/Kentico.Xperience.RepoTemplate.Admin/Client",
+      "label": "npm: build - Admin/Client",
       "detail": "webpack --mode=production"
     },
     {
@@ -52,7 +52,7 @@
       "path": "src/Kentico.Xperience.RepoTemplate.Admin/Client",
       "group": "build",
       "problemMatcher": [],
-      "label": "npm: build:dev - src/Kentico.Xperience.RepoTemplate.Admin/Client",
+      "label": "npm: build:dev - Admin/Client",
       "detail": "webpack --mode=development"
     },
     {
@@ -60,7 +60,7 @@
       "script": "start",
       "path": "src/Kentico.Xperience.RepoTemplate.Admin/Client",
       "problemMatcher": [],
-      "label": "npm: start - src/Kentico.Xperience.RepoTemplate.Admin/Client",
+      "label": "npm: watch - Admin/Client",
       "detail": "webpack serve --mode development"
     },
     {

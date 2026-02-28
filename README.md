@@ -9,9 +9,9 @@
 
 ### ---Library naming conventions---
 
----Repository name – use "xperience-by-kentico-\<project-name\>" for projects aimed for Xperience by Kentico and "xperience-\<project-name\>" for projects aimed for Kentico Xperience 13---
+---Repository name – use "xperience-by-kentico-\<project-name\>"
 
----Package Name – use "Xperience by Kentico: \<Project Name\>" for projects aimed for Xperience by Kentico and "Xperience: \<Project Name\>" for projects aimed for Kentico Xperience 13---
+---Package Name – use "Xperience by Kentico: \<Project Name\>"
 
 # ---Package Name---
 
@@ -29,11 +29,11 @@
 
 ### Library Version Matrix
 
----This matrix explains which versions of the library are compatible with different versions of Xperience by Kentico / Kentico Xperience 13---
+---This matrix explains which versions of the library are compatible with different versions of Xperience by Kentico---
 
 | Xperience Version | Library Version |
 | ----------------- | --------------- |
-| >= 28.1.0         | 1.0.0           |
+| >= 31.2.0         | 1.0.0           |
 
 ### Dependencies
 
@@ -53,7 +53,7 @@
 Add the package to your application using the .NET CLI
 
 ```powershell
-dotnet add package <library nuget package name>
+dotnet add package <repo-template>
 ```
 
 ## Quick Start

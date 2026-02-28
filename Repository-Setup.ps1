@@ -14,7 +14,7 @@ $searchText = "Kentico.Xperience.RepoTemplate"
 $replaceText = "$ProjectName"
 
 $files = Get-ChildItem -Path "./" `
- -Recurse:$true | Where-Object {
+    -Recurse:$true | Where-Object {
     @(".json", ".yml", ".props", ".md") -contains $_.Extension
 }
 
@@ -68,5 +68,10 @@ dotnet new sln -n "$ProjectName"
 dotnet sln add $srcProjectPath
 dotnet sln add $testProjectPath
 dotnet sln add $examplesProjectPath
+
+Set-Location (Join-Path "./src")
+
+dotnet new sln -n "$ProjectName.Libs"
+dotnet sln add $ProjectName
 
 Write-Host "Project setup complete."

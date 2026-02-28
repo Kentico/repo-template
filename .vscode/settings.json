@@ -32,6 +32,7 @@
   },
 
   "dotnet.defaultSolution": "Kentico.Xperience.RepoTemplate.slnx",
+  "dotnet.solution.autoOpen": "Kentico.Xperience.RepoTemplate.slnx",
 
   "eslint.workingDirectories": [
     "./src/Kentico.Xperience.RepoTemplate.Admin/Client"
