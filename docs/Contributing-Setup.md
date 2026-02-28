@@ -45,7 +45,7 @@ SQL Server 2019 or newer compatible database
 Running the sample project requires creating a new Xperience by Kentico database using the included template.
 
 Change directory in your console to `./examples/DancingGoat` and follow the instructions in the Xperience
-documentation on [creating a new database](https://docs.xperience.io/xp26/developers-and-admins/installation#Installation-CreatetheprojectdatabaseCreateProjectDatabase).
+documentation on [creating a new database](https://docs.kentico.com/documentation/developers-and-admins/installation#create-the-project-database).
 
 ### Admin Customization
 
