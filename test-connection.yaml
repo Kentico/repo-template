@@ -1,0 +1,52 @@
+# The pipeline removes merged branches that are older than 14 days, stale branches that are older than 3 months,
+# and notify authors of stale branches that are older than 2 months that their branches will be removed in 1 month.
+# Excluded branches notes:
+# - prototype/KX-18901_DGStockModuleClass: needed till 12/2025, revalidated during 01/2026
+
+name: Remove stale branches
+
+trigger: none
+
+schedules:
+  - cron: 0 4 * * Mon
+    displayName: Remove stale branches on Monday at 4:00 UTC (S 6 GMT+2 / W 5 GMT+1)
+    branches:
+      include:
+        - master
+    always: true
+
+parameters:
+  - name: DryRun
+    displayName: Dry run - keep this checked NOT to delete branches and send notifications
+    type: boolean
+    default: true
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  - name: DryRun
+    ${{ if ne(variables['Build.Reason'], 'Schedule')}}:
+      value: ${{ parameters.DryRun }}
+    ${{ else }}:
+      value: false
+  - name: AGENT_ENABLE_IMMEDIATE_TIMELINE_RECORD_UPDATES
+    value: true # KX-23409: Workaround to fix failing "Initialize containers" step due to "Can't issue ID_TOKEN" (https://github.com/microsoft/azure-pipelines-agent/issues/5485)
+
+steps:
+  - checkout: none
+
+  - task: Sut@1.0.566255
+    name: GetGitHubTokenClient
+    inputs:
+      GitHubConnection: Kentico
+
+  - task: Sut@1.0.567998
+    inputs:
+      GithubOrganization: Kentico
+      GithubToken: $(GetGitHubTokenClient.GitHubToken)
+      MergedAfterHours: 1    # branches merged > 1 hour ago get deleted
+      StaleAfterHours: 1     # branches unmerged > 1 hour ago get deleted
+      NotifyAfterHours: 1    # branches > 1 hour old get notified
+      SendGridApiKey: 325342656234
+      WhatIf: true
