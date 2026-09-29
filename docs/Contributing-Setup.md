@@ -77,5 +77,8 @@ To run the Sample app Admin customization in development mode, add the following
    - The PR should have a helpful description of the scope of changes being contributed.
    - Include screenshots or video to reflect UX or UI updates
    - Indicate if new settings need to be applied when the changes are merged - locally or in other environments
+   - Use the `populate-pr-template` agent skill (`.claude/skills/populate-pr-template/SKILL.md`, works with
+     both Copilot and Claude) to fill in `.github/PULL_REQUEST_TEMPLATE.md` from git diff and CI evidence
+     instead of writing the description by hand.
 
 1. This repository uses `lf` line endings for text files. EditorConfig and Git enforce this on all platforms; no Git line-ending override is needed.
