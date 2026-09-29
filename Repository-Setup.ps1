@@ -15,7 +15,7 @@ $replaceText = "$ProjectName"
 
 $files = Get-ChildItem -Path "./" `
     -Recurse:$true | Where-Object {
-    @(".json", ".yml", ".props", ".md") -contains $_.Extension
+    @(".json", ".yml", ".props", ".md", ".slnx") -contains $_.Extension
 }
 
 foreach ($file in $files) {
@@ -35,6 +35,11 @@ foreach ($file in $files) {
         Write-Host "Replaced text in file: $($file.FullName)"
     }
 }
+
+# Rename the root solution file to match the new project name and reuse it
+$rootSlnxPath = Join-Path "./" "$ProjectName.slnx"
+Rename-Item -Path "./Kentico.Xperience.RepoTemplate.slnx" -NewName "$ProjectName.slnx"
+Write-Host "Renamed solution file to: $rootSlnxPath"
 
 # Define project directories
 $srcProjectPath = Join-Path "./src" $ProjectName
@@ -64,10 +69,9 @@ dotnet add "$examplesProjectPath/DancingGoat.csproj" `
     reference $srcProjectPath
 Write-Host "Added reference from Dancing Goat project to class library project."
 
-dotnet new sln -n "$ProjectName"
-dotnet sln add $srcProjectPath
-dotnet sln add $testProjectPath
-dotnet sln add $examplesProjectPath
+dotnet sln $rootSlnxPath add $srcProjectPath
+dotnet sln $rootSlnxPath add $testProjectPath
+dotnet sln $rootSlnxPath add $examplesProjectPath
 
 Set-Location (Join-Path "./src")
 
