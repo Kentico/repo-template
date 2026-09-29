@@ -17,8 +17,8 @@ The requirements to setup, develop, and build this project are listed below.
 
 ### Node.js Runtime
 
-- [Node.js](https://nodejs.org/en/download) v24 or newer
-- [NVM for Windows](https://github.com/coreybutler/nvm-windows) to manage multiple installed versions of Node.js
+- [Node.js](https://nodejs.org/en/download) LTS or newer
+- [NVM for Windows](https://github.com/coreybutler/nvm-windows) or [NVM for macOS](https://github.com/nvm-sh/nvm) to manage multiple installed versions of Node.js
 - See `engines` in the solution `package.json` for specific version requirements
 
 ### C# Editor
@@ -31,7 +31,7 @@ The requirements to setup, develop, and build this project are listed below.
 
 SQL Server 2019 or newer compatible database
 
-- [SQL Server Linux](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-setup?view=sql-server-ver15)
+- [SQL Server Linux](https://learn.microsoft.com/en-us/sql/linux/install-upgrade/setup?view=sql-server-ver15)
 
 ### SQL Editor
 
@@ -78,8 +78,4 @@ To run the Sample app Admin customization in development mode, add the following
    - Include screenshots or video to reflect UX or UI updates
    - Indicate if new settings need to be applied when the changes are merged - locally or in other environments
 
-1. This repository is stored with `lf` line endings. If you are developing on Windows you can set your Git config to automatically checkout as `crlf` and commit as `lf`.
-
-   ```powershell
-   # git config --global core.autocrlf true
-   ```
+1. This repository uses `lf` line endings for text files. EditorConfig and Git enforce this on all platforms; no Git line-ending override is needed.
