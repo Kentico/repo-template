@@ -1,7 +1,8 @@
 ## Delete me after project setup!
 
 param (
-    [string]$ProjectName
+    [string]$ProjectName,
+    [switch]$AdminUiExtension
 )
 
 # Validate that the project name is provided
@@ -42,18 +43,33 @@ Rename-Item -Path "./Kentico.Xperience.RepoTemplate.slnx" -NewName "$ProjectName
 Write-Host "Renamed solution file to: $rootSlnxPath"
 
 # Define project directories
-$srcProjectPath = Join-Path "./src" $ProjectName
-$testProjectPath = Join-Path "./tests" "$ProjectName.Tests"
+$mainProjectName = $ProjectName
+if ($AdminUiExtension) {
+    $mainProjectName = "$ProjectName.Admin"
+}
+
+$srcProjectPath = Join-Path "./src" $mainProjectName
+$testProjectPath = Join-Path "./tests" "$mainProjectName.Tests"
 $examplesProjectPath = Join-Path "./examples" "DancingGoat"
 
-dotnet new classlib `
-    -n $ProjectName `
-    -o $srcProjectPath `
-    --no-restore
-Write-Host "Created class library project: $srcProjectPath"
+if ($AdminUiExtension) {
+    dotnet new kentico-xperience-admin-sample `
+        -n $mainProjectName `
+        -o $srcProjectPath `
+        --no-restore `
+        --allow-scripts Yes
+    Write-Host "Created Admin UI extension project: $srcProjectPath"
+}
+else {
+    dotnet new classlib `
+        -n $mainProjectName `
+        -o $srcProjectPath `
+        --no-restore
+    Write-Host "Created class library project: $srcProjectPath"
+}
 
 dotnet new nunit `
-    -n "$ProjectName.Tests" `
+    -n "$mainProjectName.Tests" `
     -o $testProjectPath `
     --no-restore
 Write-Host "Created NUnit test project: $testProjectPath"
@@ -61,13 +77,16 @@ Write-Host "Created NUnit test project: $testProjectPath"
 dotnet new kentico-xperience-sample-mvc -n DancingGoat -o $examplesProjectPath --no-restore --allow-scripts Yes
 Write-Host "Created Dancing Goat sample application: $examplesProjectPath"
 
-dotnet add "$testProjectPath/$ProjectName.Tests.csproj" `
+Move-Item -Path (Join-Path $examplesProjectPath ".mcp.json") -Destination "./.mcp.json" -ErrorAction Stop
+Write-Host "Moved generated MCP configuration to the repository root."
+
+dotnet add "$testProjectPath/$mainProjectName.Tests.csproj" `
     reference $srcProjectPath
-Write-Host "Added reference from test project to class library project."
+Write-Host "Added reference from test project to main project."
 
 dotnet add "$examplesProjectPath/DancingGoat.csproj" `
     reference $srcProjectPath
-Write-Host "Added reference from Dancing Goat project to class library project."
+Write-Host "Added reference from Dancing Goat project to main project."
 
 dotnet sln $rootSlnxPath add $srcProjectPath
 dotnet sln $rootSlnxPath add $testProjectPath
@@ -76,6 +95,6 @@ dotnet sln $rootSlnxPath add $examplesProjectPath
 Set-Location (Join-Path "./src")
 
 dotnet new sln -n "$ProjectName.Libs"
-dotnet sln add $ProjectName
+dotnet sln add $mainProjectName
 
 Write-Host "Project setup complete."
