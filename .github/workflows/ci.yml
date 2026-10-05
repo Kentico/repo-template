@@ -26,7 +26,7 @@ jobs:
         run: dotnet restore Kentico.Xperience.RepoTemplate.slnx --locked-mode
 
       - name: Run dotnet format
-        run: dotnet format Kentico.Xperience.RepoTemplate.slnx --exclude ./examples/ --no-restore --verify-no-changes
+        run: dotnet format Kentico.Xperience.RepoTemplate.slnx --no-restore --verify-no-changes
 
   build_and_test:
     name: Build and Test
