@@ -6,21 +6,27 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   dotnet-format:
     name: .Net Format Check
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
+      - name: Restore dependencies
+        run: dotnet restore Kentico.Xperience.RepoTemplate.slnx --locked-mode
+
       - name: Run dotnet format
-        run: dotnet format Kentico.Xperience.RepoTemplate.slnx --exclude ./examples/** --verify-no-changes
+        run: dotnet format Kentico.Xperience.RepoTemplate.slnx --no-restore --verify-no-changes
 
   build_and_test:
     name: Build and Test
@@ -37,10 +43,10 @@ jobs:
       DOTNET_NOLOGO: 1
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
