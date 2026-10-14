@@ -1,14 +1,7 @@
-# Repository-wide basics. Code-style rules live in nested .editorconfig files (e.g. src/, tests/).
+# Repository-wide basics (from PR #21). Code-style rules live in nested .editorconfig files (e.g. src/, tests/).
 
 root = true
 
 [*]
 end_of_line = lf
 insert_final_newline = true
-charset = utf-8
-indent_style = space
-indent_size = 4
-trim_trailing_whitespace = true
-
-[*.{json,yml,yaml,props,targets,csproj,slnx,md}]
-indent_size = 2
