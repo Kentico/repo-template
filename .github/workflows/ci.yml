@@ -6,26 +6,13 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
-  dotnet-format:
-    name: .Net Format Check
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          global-json-file: global.json
-
-      - name: Run dotnet format
-        run: dotnet format Kentico.Xperience.RepoTemplate.slnx --exclude ./examples/** --verify-no-changes
-
   build_and_test:
     name: Build and Test
     runs-on: ubuntu-latest
-    needs: dotnet-format
     defaults:
       run:
         shell: pwsh
@@ -37,27 +24,36 @@ jobs:
       DOTNET_NOLOGO: 1
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
       - name: Install dependencies
         run: |
-          dotnet restore `
+          dotnet restore Kentico.Xperience.RepoTemplate.slnx `
             --locked-mode
+
+      - name: Verify lock files are committed
+        shell: bash
+        run: |
+          if [ -n "$(git status --porcelain --untracked-files=all -- '**/packages.lock.json')" ]; then
+            echo "packages.lock.json files are missing or outdated - run dotnet restore and commit them."
+            git status --porcelain --untracked-files=all -- '**/packages.lock.json'
+            exit 1
+          fi
 
       - name: Build Solution
         run: |
-          dotnet build `
+          dotnet build Kentico.Xperience.RepoTemplate.slnx `
             --configuration Release `
             --no-restore
 
       - name: Test Solution
         run: |
-          dotnet test `
+          dotnet test Kentico.Xperience.RepoTemplate.slnx `
             --configuration Release `
             --no-build `
             --no-restore

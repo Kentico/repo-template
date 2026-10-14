@@ -1,0 +1,15 @@
+<Project>
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);KXE0004;KXE0006</NoWarn>
+    <HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
+    <Nullable>annotations</Nullable>
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+  </PropertyGroup>
+
+  <!-- Sample apps are exempt from the mandatory static analysis. -->
+  <ItemGroup>
+    <PackageReference Remove="SonarAnalyzer.CSharp" />
+  </ItemGroup>
+</Project>

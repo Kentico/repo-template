@@ -4,12 +4,14 @@
     <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <!-- A PackageVersion declared twice (e.g. here and in Directory.Build.Extensions.props) is an error, not a warning. -->
+    <WarningsAsErrors>$(WarningsAsErrors);NU1506</WarningsAsErrors>
+    <!-- One place to bump every Xperience package, including the ones declared in extension props. -->
+    <XperienceVersion>31.9.0</XperienceVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Kentico.Xperience.Admin" Version="31.2.1" />
-    <PackageVersion Include="Kentico.Xperience.WebApp" Version="31.2.1" />
-    <PackageVersion Include="kentico.xperience.azurestorage" Version="31.2.1" />
-    <PackageVersion Include="kentico.xperience.imageprocessing" Version="31.2.1" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.20.0.135146" />
+    <PackageVersion Include="Kentico.Xperience.Admin" Version="$(XperienceVersion)" />
+    <PackageVersion Include="Kentico.Xperience.WebApp" Version="$(XperienceVersion)" />
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
   </ItemGroup>
 </Project>
