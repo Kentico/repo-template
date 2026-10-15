@@ -10,19 +10,20 @@
      the tokens {ProjectName}, {ProjectNameDashed}, {ProjectShortName}, {RepositoryName}, {OwnerTeam}.
   2. Replaces the placeholders as plain strings in every tracked text file, keeping line endings and BOM.
   3. Renames files and folders whose names contain a placeholder.
-  4. Runs hooks/*.ps1 (name order) with the resolved values.
+  4. Runs hooks/*.ps1 (name order) with the resolved values; -HookOptions is handed to them as $Values.Options.
   5. Stops on the first error.
   6. Deletes the .template folder.
 
 .EXAMPLE
   .\.template\setup.ps1 -ProjectName Kentico.Xperience.CoolProject -RepositoryName xperience-by-kentico-cool-project -OwnerTeam @Kentico/cool-team
+  .\.template\setup.ps1 -ProjectName Kentico.Xperience.CoolProject -HookOptions @{ AdminUiExtension = $true }   # options are passed to hooks as $Values.Options
 #>
 [CmdletBinding()]
 param (
     [Parameter(Mandatory)][string]$ProjectName,
     [string]$RepositoryName,
     [string]$OwnerTeam,
-    [switch]$AdminUiExtension,
+    [hashtable]$HookOptions = @{},
     [switch]$KeepTemplateFolder
 )
 
@@ -47,7 +48,7 @@ $values = [ordered]@{
     ProjectShortNameLower = $shortName.ToLowerInvariant()
     RepositoryName    = $RepositoryName
     OwnerTeam         = $OwnerTeam
-    AdminUiExtension  = [bool]$AdminUiExtension
+    Options           = $HookOptions
 }
 
 function Expand-Tokens([string]$text) {
