@@ -27,6 +27,7 @@ The template ships no projects. Create yours under `src/` (and tests under `test
 
 1. Add it to both solution files: the root one, which CI builds, and `src/*.Libs.slnx`, which the release pipeline builds and packs.
 1. Run `dotnet restore` and commit the generated `packages.lock.json`; CI restores with `--locked-mode`.
+1. Run `dotnet format` before the first commit; `dotnet new` writes CRLF files on Windows and CI checks formatting with `--verify-no-changes`.
 
 ## Development Workflow
 
