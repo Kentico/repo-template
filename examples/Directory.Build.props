@@ -8,9 +8,4 @@
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
   </PropertyGroup>
-  <!-- Sample apps ship their own Directory.Packages.props. Drop PackageVersion items inherited from the root props
-       (and from Directory.Build.Extensions.props) so they cannot clash with the versions the sample pins. -->
-  <ItemGroup>
-    <PackageVersion Remove="@(PackageVersion)" />
-  </ItemGroup>
 </Project>
