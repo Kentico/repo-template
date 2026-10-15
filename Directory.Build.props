@@ -32,6 +32,10 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <RootNamespace>Kentico.Xperience.RepoTemplate</RootNamespace>
 
+    <!-- Set to false to manually control embedded assets in the assembly -->
+    <!-- This can impact things like embedded localization .resx files -->
+    <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
+
     <!-- Validation by the .NET SDK itself: code-style rules from .editorconfig fail the build, plus the recommended CA analyzers. -->
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
