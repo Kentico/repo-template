@@ -1,7 +1,7 @@
 ## ---Template info---
 
----Run the `Repository-Setup.ps1` in the root of this repository, specifying the `ProjectName` for the new project
----ex: `.\Repository-Setup.ps1 -ProjectName Kentico.Xperience.CoolProject`
+---Run `.template/setup.ps1` in the root of this repository, specifying the `ProjectName` for the new project; see the script header for the other parameters
+---ex: `.\.template\setup.ps1 -ProjectName Kentico.Xperience.CoolProject -OwnerTeam @Kentico/cool-team`
 
 ---This section contains general information about the repository template and is to be deleted before submitting a pull request with the final documentation.---
 
