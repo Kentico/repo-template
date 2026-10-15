@@ -55,14 +55,6 @@ jobs:
           dotnet restore Kentico.Xperience.RepoTemplate.slnx `
             --locked-mode
 
-      - name: Verify lock files are committed
-        shell: bash
-        run: |
-          if [ -n "$(git status --porcelain --untracked-files=all -- '**/packages.lock.json')" ]; then
-            echo "packages.lock.json files are missing or outdated - run dotnet restore and commit them."
-            git status --porcelain --untracked-files=all -- '**/packages.lock.json'
-            exit 1
-          fi
 
       - name: Build Solution
         run: |

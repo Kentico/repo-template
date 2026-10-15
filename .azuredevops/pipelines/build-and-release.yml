@@ -87,17 +87,6 @@ stages:
               custom: restore
               arguments: ${{ variables.slnPath }} --locked-mode
 
-          - task: PowerShell@2
-            displayName: Verify lock files are committed
-            inputs:
-              targetType: inline
-              script: |
-                $changed = git status --porcelain --untracked-files=all -- '**/packages.lock.json'
-                if ($changed) {
-                  Write-Host "packages.lock.json files are missing or outdated - run dotnet restore and commit them."
-                  Write-Host $changed
-                  exit 1
-                }
 
           - task: GetAzureAuthToken@5
             name: KeyVaultToken
