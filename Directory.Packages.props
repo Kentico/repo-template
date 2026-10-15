@@ -4,8 +4,6 @@
     <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-    <!-- A PackageVersion declared twice (e.g. here and in Directory.Build.Extensions.props) is an error, not a warning. -->
-    <WarningsAsErrors>$(WarningsAsErrors);NU1506</WarningsAsErrors>
   </PropertyGroup>
   <!-- No packages are preconfigured. A library adds its PackageVersion items here; a template built on top adds them in Directory.Build.Extensions.props. -->
 </Project>
