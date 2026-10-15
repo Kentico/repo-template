@@ -6,10 +6,6 @@
     <HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
     <Nullable>annotations</Nullable>
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
   </PropertyGroup>
-
-  <!-- Sample apps are exempt from the mandatory static analysis. -->
-  <ItemGroup>
-    <PackageReference Remove="SonarAnalyzer.CSharp" />
-  </ItemGroup>
 </Project>

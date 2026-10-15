@@ -25,11 +25,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CopyDocumentationFilesFromPackages>true</CopyDocumentationFilesFromPackages>
     <CopyDebugSymbolFilesFromPackages>true</CopyDebugSymbolFilesFromPackages>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <RootNamespace>Kentico.Xperience.RepoTemplate</RootNamespace>
+
+    <!-- Validation by the .NET SDK itself: code-style rules from .editorconfig fail the build, plus the recommended CA analyzers. -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(Configuration) == 'Release' ">
@@ -39,13 +44,6 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-
-  <ItemGroup Label="StaticCodeAnalysis">
-    <PackageReference Include="SonarAnalyzer.CSharp">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <!-- Extension point: a template or repository built on top of this one adds its settings there. -->
   <Import Project="$(MSBuildThisFileDirectory)Directory.Build.Extensions.props" Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.Extensions.props')" />

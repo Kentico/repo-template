@@ -6,12 +6,6 @@
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <!-- A PackageVersion declared twice (e.g. here and in Directory.Build.Extensions.props) is an error, not a warning. -->
     <WarningsAsErrors>$(WarningsAsErrors);NU1506</WarningsAsErrors>
-    <!-- One place to bump every Xperience package, including the ones declared in extension props. -->
-    <XperienceVersion>31.9.0</XperienceVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageVersion Include="Kentico.Xperience.Admin" Version="$(XperienceVersion)" />
-    <PackageVersion Include="Kentico.Xperience.WebApp" Version="$(XperienceVersion)" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
-  </ItemGroup>
+  <!-- No packages are preconfigured. A library adds its PackageVersion items here; a template built on top adds them in Directory.Build.Extensions.props. -->
 </Project>
