@@ -11,7 +11,4 @@
 
         <Exec Command="dotnet AzureSignTool sign --azure-key-vault-url $(AuthenticodeKeyVaultUrl) --azure-key-vault-accesstoken $(AuthenticodeAccessToken) --azure-key-vault-certificate $(AuthenticodeCertificateName) --timestamp-rfc3161 $(TimestampServerUrl) --skip-signed %(AssemblyToSign.Identity)" />
     </Target>
-
-    <!-- Extension point: a template or repository built on top of this one adds its targets there. -->
-    <Import Project="$(MSBuildThisFileDirectory)Directory.Build.Extensions.targets" Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.Extensions.targets')" />
 </Project>

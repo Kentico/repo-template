@@ -49,7 +49,4 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <!-- Extension point: a template or repository built on top of this one adds its settings there. -->
-  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.Extensions.props" Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.Extensions.props')" />
-
 </Project>
