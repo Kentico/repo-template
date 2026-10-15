@@ -52,19 +52,19 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dotnet restore Kentico.Xperience.RepoTemplate.slnx `
+          dotnet restore `
             --locked-mode
 
 
       - name: Build Solution
         run: |
-          dotnet build Kentico.Xperience.RepoTemplate.slnx `
+          dotnet build `
             --configuration Release `
             --no-restore
 
       - name: Test Solution
         run: |
-          dotnet test Kentico.Xperience.RepoTemplate.slnx `
+          dotnet test `
             --configuration Release `
             --no-build `
             --no-restore
