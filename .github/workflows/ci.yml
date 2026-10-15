@@ -55,7 +55,6 @@ jobs:
           dotnet restore `
             --locked-mode
 
-
       - name: Build Solution
         run: |
           dotnet build `
