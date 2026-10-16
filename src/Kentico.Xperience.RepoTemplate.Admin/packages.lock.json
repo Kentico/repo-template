@@ -4,13 +4,13 @@
     "net10.0": {
       "Kentico.Xperience.Admin": {
         "type": "Direct",
-        "requested": "[31.9.2, )",
-        "resolved": "31.9.2",
-        "contentHash": "FkXBm9yuQxUMWquT0aF0fZQSfE6HJnDw3rG/o8LtZM4SRy2K3nW25xAZa+23qgTI6NzqOWDzGiB9QvARsw64qg==",
+        "requested": "[31.9.3, )",
+        "resolved": "31.9.3",
+        "contentHash": "mRcS9CSsVg7VWRwPiQBgG7u6zG0Y7b1DEM8frsTXyM84POAbTdEZSFeXekgnxX85Lg5hH0wARXr4GlheK0y9sg==",
         "dependencies": {
           "Azure.AI.OpenAI": "2.1.0",
           "Kentico.Aira.Client": "6.1.0",
-          "Kentico.Xperience.WebApp": "[31.9.2]",
+          "Kentico.Xperience.WebApp": "[31.9.3]",
           "Microsoft.Agents.AI": "1.21.0",
           "Microsoft.Agents.AI.OpenAI": "1.21.0",
           "Microsoft.Agents.AI.Workflows": "1.21.0",
@@ -414,8 +414,8 @@
       },
       "Kentico.Xperience.Core": {
         "type": "Transitive",
-        "resolved": "31.9.2",
-        "contentHash": "3m40TpW58k8rvyp1jb6wn9Z3yyAeIhDb8FTHoDaG2wtudqt66hPhtsdcSCophEVG3+IEKTptTyb3TCiKbjRlsw==",
+        "resolved": "31.9.3",
+        "contentHash": "W+vjBkoNQxIy5USkVzz+3+bBt7A/iaL1ZGpDM74KVDFdtNTTR3dFttvWvo4JNvCyi52Y83MnUdJVAxD4qjYLig==",
         "dependencies": {
           "AngleSharp": "1.8.1",
           "Kentico.Aira.Client": "6.1.0",
@@ -788,20 +788,20 @@
       "kentico.xperience.repotemplate": {
         "type": "Project",
         "dependencies": {
-          "Kentico.Xperience.WebApp": "[31.9.2, )"
+          "Kentico.Xperience.WebApp": "[31.9.3, )"
         }
       },
       "Kentico.Xperience.WebApp": {
         "type": "CentralTransitive",
-        "requested": "[31.9.2, )",
-        "resolved": "31.9.2",
-        "contentHash": "Psvi4EJeRoLCSv4cUnC01C1rk/I6LyU0h3V4ZQpK+rQw3NREmqQ4WzxZ807vC8rNq+1TU9rwnv1RJRxjCj6VlQ==",
+        "requested": "[31.9.3, )",
+        "resolved": "31.9.3",
+        "contentHash": "8hifzCi6uzAINQW1K3HOTNVjmJyHW7rbcyyzDnoAa+vQEDMAwRneFgoS/DR0Xqu738A7EttPG6KQgBWq/iPgNg==",
         "dependencies": {
           "CommandLineParser": "2.9.1",
           "HotChocolate.AspNetCore": "15.1.18",
           "HotChocolate.Data": "15.1.18",
           "HtmlSanitizer": "9.2.1039",
-          "Kentico.Xperience.Core": "[31.9.2]",
+          "Kentico.Xperience.Core": "[31.9.3]",
           "Microsoft.Extensions.FileProviders.Embedded": "8.0.31"
         }
       }

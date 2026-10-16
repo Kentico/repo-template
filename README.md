@@ -30,7 +30,7 @@
 
 | Xperience Version | Library Version |
 | ----------------- | --------------- |
-| >= 31.9.2         | 1.0.0           |
+| >= 31.9.3         | 1.0.0           |
 
 ### Dependencies
 
