@@ -4,7 +4,10 @@
 
 .DESCRIPTION
     Defaults come from the CMSConnectionString in examples/DancingGoat/appsettings.json.
-    dbmanager writes the connection string and a new CMSHashStringSalt back to that file.
+    dbmanager writes the connection string and a new CMSHashStringSalt to that file; the script then
+    moves both into DancingGoat's user secrets and restores appsettings.json, so nothing local is
+    committed. In CI (CI environment variable set) or with -NoUserSecrets, appsettings.json keeps
+    the values instead: user secrets only load in the Development environment.
 
     Without a license file the database is still created; add the license on first sign-in
     to the administration (/admin, user "administrator").
@@ -33,14 +36,19 @@ param (
     [string]$LicenseFile = $env:XPERIENCE_LICENSE_FILE,
 
     # Drop and recreate the database if it exists
-    [switch]$Recreate
+    [switch]$Recreate,
+
+    # Keep dbmanager's values in appsettings.json instead of moving them to user secrets (default in CI)
+    [switch]$NoUserSecrets = [bool]$env:CI
 )
 
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path $PSScriptRoot -Parent
 $project = Join-Path $root 'examples/DancingGoat'
-$appsettings = Get-Content (Join-Path $project 'appsettings.json') -Raw | ConvertFrom-Json
+$appsettingsPath = Join-Path $project 'appsettings.json'
+$appsettingsOriginal = [IO.File]::ReadAllText($appsettingsPath)
+$appsettings = $appsettingsOriginal | ConvertFrom-Json
 
 $connection = [System.Data.Common.DbConnectionStringBuilder]::new()
 # set_ConnectionString: PowerShell treats the builder as a dictionary, so property assignment would add a key instead
@@ -85,6 +93,16 @@ try {
     try {
         dotnet kentico-xperience-dbmanager -- @arguments
         if ($LASTEXITCODE -ne 0) { throw "kentico-xperience-dbmanager failed ($LASTEXITCODE)" }
+
+        if (-not $NoUserSecrets) {
+            $written = [IO.File]::ReadAllText($appsettingsPath) | ConvertFrom-Json
+            dotnet user-secrets set 'ConnectionStrings:CMSConnectionString' $written.ConnectionStrings.CMSConnectionString | Out-Null
+            if ($LASTEXITCODE -ne 0) { throw 'dotnet user-secrets set failed' }
+            dotnet user-secrets set 'CMSHashStringSalt' $written.CMSHashStringSalt | Out-Null
+            if ($LASTEXITCODE -ne 0) { throw 'dotnet user-secrets set failed' }
+            [IO.File]::WriteAllText($appsettingsPath, $appsettingsOriginal)
+            Write-Host 'Moved the connection string and CMSHashStringSalt to DancingGoat user secrets.'
+        }
     }
     finally {
         Pop-Location

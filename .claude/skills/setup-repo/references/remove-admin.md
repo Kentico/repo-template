@@ -15,7 +15,9 @@ Done when every item below is removed or edited and `git grep --untracked -n -e 
 - `.gitignore`: the `**/Client/dist/*` line
 - `.github/PULL_REQUEST_TEMPLATE.md`: the `### Admin UI / Client` section
 - `.vscode/tasks.json`: every task labelled `npm: ...`; `.vscode/settings.json`: the `eslint.workingDirectories` key (keep the JSON valid)
-- `docs/Contributing-Setup.md`: the Node.js requirement
+- `docs/Contributing-Setup.md`: the admin `Client/package.json` reference in the Node.js requirement (keep Node.js itself: `tests/e2e` needs it)
+- `tests/e2e/admin/custom-template.spec.ts` and `tests/e2e/admin/customTemplatePage.ts` (the sample admin page they test is gone); keep the rest of `tests/e2e/admin` – admin sign-in and shell tests still apply to libraries without admin UI pages
+- `tests/e2e/README.md`: the Proxy-mode `npm start` requirement
 - README install command: the core package instead of `.Admin`
 
 `Kentico.Xperience.Admin` stays in `Directory.Packages.props`: DancingGoat still references it.

@@ -41,6 +41,10 @@ Running the sample project requires an Xperience by Kentico database. Create it 
 - `-Recreate` drops and recreates an existing database.
 - The script runs [`kentico-xperience-dbmanager`](https://docs.kentico.com/documentation/developers-and-admins/installation#create-the-project-database), which writes the connection string and a new `CMSHashStringSalt` to `examples/DancingGoat/appsettings.json`. Don't commit those changes.
 
+### End-to-end tests
+
+Playwright tests for the live site and the administration live in `tests/e2e`; they need a licensed database. See [`tests/e2e/README.md`](../tests/e2e/README.md).
+
 ## Development Workflow
 
 1. Create a new branch with one of the following prefixes
