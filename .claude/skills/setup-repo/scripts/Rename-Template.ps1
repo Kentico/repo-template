@@ -172,7 +172,6 @@ function Update-File($path, [scriptblock]$transform) {
 }
 
 Update-File "$dg/DancingGoat.csproj" { param($c) $c -replace '<UserSecretsId>[^<]+</UserSecretsId>', "<UserSecretsId>$([guid]::NewGuid())</UserSecretsId>" }
-Update-File "$dg/appsettings.json" { param($c) $c -replace '"CMSHashStringSalt": "[^"]*"', "`"CMSHashStringSalt`": `"$([guid]::NewGuid())`"" }
 Update-File "$dg/appsettings.Development.json" {
     param($c)
     $c = $c -replace '"Secret": "[^"]*"', "`"Secret`": `"$secret`""

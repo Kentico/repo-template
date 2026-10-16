@@ -39,6 +39,7 @@ Template ships buildable, CI-verified projects under sentinel names. New repos a
 - 2026-10-16: families are Kentico, Labs, Community (support policy). Example is a separate choice under any family: not packed or published; Labs examples put `labs` in the repo slug. Product names: `Xperience by Kentico: X`, `Xperience by Kentico Labs: X`, `Xperience Community: X`.
 - 2026-10-16: planning docs are per feature under `.agent-resources/<feature>/`; `setup-repo` deletes the template's feature folders.
 - 2026-10-16: DancingGoat `design-conventions` skill lives at the root `.claude/skills/` (template content, DancingGoat-scoped description, paths-relative note); `update-xperience` strips `.claude`/`.github` from pristines and hands the target skill to the agent for comparison.
+- 2026-10-16: `dbmanager` owns DancingGoat `CMSHashStringSalt`; template ships it empty and setup no longer generates it.
 
 ## Slice log
 

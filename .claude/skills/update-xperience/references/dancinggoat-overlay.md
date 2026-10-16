@@ -6,7 +6,7 @@ What this repository changes in the generated `kentico-xperience-sample-mvc` pro
 | --- | --- |
 | `DancingGoat.csproj` | `ProjectReference` to the core project and the `.Admin` project (unconditional, `SeparatedAdmin` ignored); repository's own `UserSecretsId` |
 | `Program.cs` | `using CMS.EmailEngine;` and `using <core namespace>;`; `builder.Services.Add<Name>();` after `AddDancingGoatServices()`; `AddXperienceSystemSmtp()`, `ConfigureSystemSmtpOptions(...)`, `Configure<SystemEmailOptions>(...)` before `AddDancingGoatManagementApi()` |
-| `appsettings.json` | `CMSConnectionString` to `localhost,1433`, database = repository slug, `sa` / `Pass@12345`; repository's own `CMSHashStringSalt` |
+| `appsettings.json` | `CMSConnectionString` to `localhost,1433`, database = repository slug, `sa` / `Pass@12345`; `CMSHashStringSalt` is left as `dbmanager` writes it |
 | `appsettings.Development.json` | repository's ManagementApi port and secret; `SystemSmtpOptions` (localhost:1025); `SystemEmailOptions`; `CMSAdminClientModuleSettings` Proxy entry for the admin module key |
 | `Properties/launchSettings.json` | single `DancingGoat` profile, no IIS settings, `launchBrowser: false`, repository's port |
 | `AGENTS.md` | MCP servers described as configured in the repository root `.mcp.json` |
