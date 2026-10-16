@@ -40,6 +40,7 @@ Template ships buildable, CI-verified projects under sentinel names. New repos a
 - 2026-10-16: planning docs are per feature under `.agent-resources/<feature>/`; `setup-repo` deletes the template's feature folders.
 - 2026-10-16: DancingGoat `design-conventions` skill lives at the root `.claude/skills/` (template content, DancingGoat-scoped description, paths-relative note); `update-xperience` strips `.claude`/`.github` from pristines and hands the target skill to the agent for comparison.
 - 2026-10-16: `dbmanager` owns DancingGoat `CMSHashStringSalt`; template ships it empty and setup no longer generates it.
+- 2026-10-16: template smoke matrix lives in its own workflow, `.github/workflows/template-smoke.yml`, which setup deletes whole (no marker-based truncation of `ci.yml`).
 
 ## Slice log
 

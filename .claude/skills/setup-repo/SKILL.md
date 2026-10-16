@@ -25,7 +25,7 @@ Run `./.claude/skills/setup-repo/scripts/Rename-Template.ps1 -Family <Family> -N
 
 ## 3. Rename
 
-Run the same command without `-Preview`. Done when it exits 0. It removes the template-only `template_smoke` CI job, replaces tokens (including product names), renames files and folders, regenerates DancingGoat secrets and ports, sets the `LICENSE.md` year, and exits 1 listing any leftover token. On failure, fix the listed lines by hand; a rerun is safe but regenerates secrets and ports.
+Run the same command without `-Preview`. Done when it exits 0. It deletes the template-only `.github/workflows/template-smoke.yml`, replaces tokens (including product names), renames files and folders, regenerates DancingGoat secrets and ports, sets the `LICENSE.md` year, and exits 1 listing any leftover token. On failure, fix the listed lines by hand; a rerun is safe but regenerates secrets and ports.
 
 ## 4. Apply family edits
 

@@ -116,13 +116,11 @@ function Get-TemplateFiles {
         Where-Object { $textExtensions -contains [IO.Path]::GetExtension($_) -or $textNames -contains [IO.Path]::GetFileName($_) }
 }
 
-# 1. Remove template-only CI (the template_smoke job is the last job in ci.yml)
-$ci = Join-Path $root '.github/workflows/ci.yml'
-$ciContent = [IO.File]::ReadAllText($ci)
-$marker = $ciContent.IndexOf('  # Template repository only.')
-if ($marker -ge 0) {
-    [IO.File]::WriteAllText($ci, $ciContent.Substring(0, $marker).TrimEnd() + "`n")
-    Write-Host 'Removed template_smoke job from .github/workflows/ci.yml'
+# 1. Remove template-only CI
+$smokeWorkflow = Join-Path $root '.github/workflows/template-smoke.yml'
+if (Test-Path $smokeWorkflow) {
+    Remove-Item $smokeWorkflow
+    Write-Host 'Removed .github/workflows/template-smoke.yml'
 }
 
 # 2. Replace tokens in file contents (case-sensitive, ordered)
