@@ -76,6 +76,7 @@ Delete `.claude/skills/setup-repo/` only after step 9 passes. Done when the fold
 
 List: family, library or example, every resulting name, admin project kept or removed, files deleted in steps 4, 5, and 7, validation results, remaining placeholders, and the maintainer's next steps:
 
-- create the local database for DancingGoat (`docs/Contributing-Setup.md`)
+- create the local environment with the `setup-local` skill
+- add the Xperience license key as the `XPERIENCE_LICENSE_KEY` repository secret and Dependabot secret, so the `e2e` CI job runs (it is skipped without it)
 - Community: Trusted Publishing policy on nuget.org and the `NUGET_USER` repository variable; package icon
 - review `.github/CODEOWNERS`

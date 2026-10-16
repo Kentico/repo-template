@@ -2,7 +2,7 @@
 
 ## Current slice
 
-Slice 2 (Playwright e2e) done. Next: 3 – CI e2e job. Branch `feat/local-environment`, stacked on #24.
+Slice 3 (CI e2e job) done locally; not yet run on GitHub. Next: 4 – Aspire AppHost. Branch `feat/local-environment`, stacked on #24.
 
 ## Components
 
@@ -11,7 +11,7 @@ Slice 2 (Playwright e2e) done. Next: 3 – CI e2e job. Branch `feat/local-enviro
 | Database init script | done (`scripts/Initialize-Database.ps1`) |
 | Playwright e2e project | done; 6/6 pass locally with a license |
 | `setup-local` skill | done (not agent-tested on a fresh clone) |
-| CI e2e job | not started |
+| CI e2e job | done; local CI simulation 6/6; GitHub run pending (`XPERIENCE_LICENSE_KEY` secret) |
 | Aspire AppHost | not started |
 | CI restore support | not started (optional) |
 

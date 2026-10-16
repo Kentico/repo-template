@@ -41,3 +41,4 @@ One-command local startup for DancingGoat and the template's libraries, and Play
 
 - 2026-10-16 – Slice 1: `scripts/Initialize-Database.ps1` (dbmanager wrapper, defaults from DancingGoat connection string, optional license, `-Recreate`); contributing docs updated. Verified against Docker SQL Server 2022.
 - 2026-10-16 – Slice 2: `tests/e2e` Playwright project (live-site + admin), user-secrets handoff in the database script, dependabot/docs/setup wiring. 6/6 pass locally with a license.
+- 2026-10-16 – Slice 3: CI `e2e` job (mssql + Mailpit services, license secret gate, Release build, Playwright) + `appsettings.CI.json`. Local CI simulation 6/6.

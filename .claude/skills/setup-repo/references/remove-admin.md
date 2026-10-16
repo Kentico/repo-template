@@ -8,7 +8,7 @@ Done when every item below is removed or edited and `git grep --untracked -n -e 
 - root `.slnx` and `src/*.Libs.slnx`: the `<Admin>` project entry (`dotnet sln <file> remove <csproj>`)
 - `examples/DancingGoat/DancingGoat.csproj`: the `<Admin>` `ProjectReference`
 - `examples/DancingGoat/appsettings.Development.json`: the `CMSAdminClientModuleSettings` section
-- `.github/workflows/ci.yml`: the `Setup Node.js` and `Type-check admin client` steps, and the comment about the npm build
+- `.github/workflows/ci.yml`: in `build_and_test`, the `Setup Node.js` and `Type-check admin client` steps and the npm build comment; in `e2e`, the admin `Client/package-lock.json` line of `cache-dependency-path` and the npm build comment
 - `.azuredevops/pipelines/build-and-release.yml` (if present): the Node.js version + `UseNode` steps and the `Admin` artifact
 - `.github/workflows/publish.yml` (if present): the same Node.js step
 - `.github/dependabot.yml`: the `npm` entry
