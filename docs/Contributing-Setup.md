@@ -29,10 +29,17 @@ SQL Server 2019 or newer compatible database
 
 ### Database Setup
 
-Running the sample project requires creating a new Xperience by Kentico database named `xperience-by-kentico-repotemplate` (see `ConnectionStrings` in `examples/DancingGoat/appsettings.json`) using the included template.
+Running the sample project requires an Xperience by Kentico database. Create it from the repository root:
 
-Change directory in your console to `./examples/DancingGoat` and follow the instructions in the Xperience
-documentation on [creating a new database](https://docs.kentico.com/documentation/developers-and-admins/installation#create-the-project-database).
+```powershell
+./scripts/Initialize-Database.ps1
+```
+
+- Server, database (`xperience-by-kentico-repotemplate`), and SQL login come from `ConnectionStrings` in `examples/DancingGoat/appsettings.json`. The default targets a Docker SQL Server on `localhost,1433` with the `sa` login; for a locally installed SQL Server pass `-ServerName` (and `-Username ""` for Windows authentication).
+- The `administrator` account password is `Pass@12345`, or the `XPERIENCE_ADMIN_PASSWORD` environment variable.
+- Pass `-LicenseFile <path>` (or set `XPERIENCE_LICENSE_FILE`) to install your Xperience license. Without it, add the license when you first sign in to the administration.
+- `-Recreate` drops and recreates an existing database.
+- The script runs [`kentico-xperience-dbmanager`](https://docs.kentico.com/documentation/developers-and-admins/installation#create-the-project-database), which writes the connection string and a new `CMSHashStringSalt` to `examples/DancingGoat/appsettings.json`. Don't commit those changes.
 
 ## Development Workflow
 
