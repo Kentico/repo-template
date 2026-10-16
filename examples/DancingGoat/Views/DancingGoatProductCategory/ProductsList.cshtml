@@ -1,0 +1,5 @@
+﻿@using DancingGoat.Models
+
+@model ProductSectionListViewModel
+
+<partial name="_ProductListItemGrid" model='new ProductListItemGridViewModel(Model.Items, HtmlLocalizer["No products."])' />

@@ -1,0 +1,54 @@
+﻿@using DancingGoat.Helpers
+@using DancingGoat.PageTemplates
+@using DancingGoat.Widgets
+@using DancingGoat.Models
+@using DancingGoat.Services
+
+@inject WebPageUrlProvider webPageUrlProvider
+
+@model TemplateViewModel
+
+@{
+    Layout = "~/Views/Shared/_DancingGoatLayout.cshtml";
+    var templateModel = Model.GetTemplateModel<ArticleDetailViewModel>();
+
+    var articlesPath = await webPageUrlProvider.ArticlesPageUrl();
+}
+
+<div class="page-head">
+    <div class="wrap">
+        <div class="crumb">
+            <a href="@articlesPath">&larr; @HtmlLocalizer["Back to articles"]</a>
+        </div>
+        <div class="article-hero">
+            @if (!string.IsNullOrEmpty(templateModel.TeaserUrl))
+            {
+                <div class="media">
+                    <img src="@Url.Content(templateModel.TeaserUrl)" alt="@templateModel.Title" title="@templateModel.Title" loading="lazy" />
+                </div>
+            }
+            <div>
+                <span class="date-line">@templateModel.PublicationDate.ToString("D")</span>
+                <h1 class="display">@HeadingFormatter.Format(templateModel.Title)</h1>
+                @if (!string.IsNullOrEmpty(templateModel.Summary))
+                {
+                    <p class="lede">@templateModel.Summary</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="block-tight">
+    <div class="wrap">
+        <div class="article-layout">
+            <div class="prose">
+                @Html.Kentico().ResolveUrls(templateModel.Text)
+            </div>
+            <aside class="article-side">
+                <editable-area area-identifier="sidebar"
+                               area-options-allowed-widgets="new[] { SystemComponentIdentifiers.RICH_TEXT_WIDGET_IDENTIFIER, ComponentIdentifiers.CTA_BUTTON_WIDGET }" />
+            </aside>
+        </div>
+    </div>
+</section>

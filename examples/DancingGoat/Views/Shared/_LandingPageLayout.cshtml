@@ -1,0 +1,33 @@
+﻿@using Kentico.Activities.Web.Mvc
+@using Kentico.OnlineMarketing.Web.Mvc
+@using DancingGoat.Models
+@using DancingGoat.PageTemplates
+
+@model TemplateViewModel<LandingPageSingleColumnProperties>
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html lang="@System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName" data-page-builder="@(Context.Kentico().PageBuilder().GetMode() != PageBuilderMode.Off ? "true" : "false")">
+<head id="head">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <vc:seo-metadata page-model="Model" page-title="@((string)ViewBag.Title)" />
+    <link rel="icon" href="~/content/images/favicon.svg" type="image/svg+xml" />
+    <link href="~/Content/Styles/Landing-page.css" rel="stylesheet" type="text/css" />
+    <page-builder-styles />
+    @Html.Kentico().ActivityLoggingScriptV2()
+</head>
+<body class="landing-page campaign">
+    <a href="#main" class="skip-link">@HtmlLocalizer["Skip to content"]</a>
+    <vc:tracking-consent />
+    <main id="main">
+        @RenderBody()
+    </main>
+    <partial name="_Footer" />
+    <script src="~/Scripts/reveal.js" defer></script>
+    <page-builder-scripts />
+</body>
+</html>

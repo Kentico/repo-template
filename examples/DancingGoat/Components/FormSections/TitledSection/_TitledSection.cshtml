@@ -1,0 +1,18 @@
+﻿@using Kentico.Forms.Web.Mvc
+@using DancingGoat.Components.FormSections.TitledSection
+@using Kentico.Web.Mvc;
+@using Kentico.PageBuilder.Web.Mvc
+
+
+@model FormSectionViewModel<TitledSectionProperties>
+
+@if (!string.IsNullOrEmpty(Model?.Properties?.Title))
+{
+    <div class="ktc-section-title">
+        @Html.Raw(Html.Kentico().ResolveRichText(Model.Properties.Title))
+    </div>
+}
+
+<div>
+    @await Html.Kentico().FormZoneAsync()
+</div>

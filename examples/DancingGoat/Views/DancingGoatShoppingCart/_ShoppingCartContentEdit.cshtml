@@ -1,0 +1,30 @@
+@using DancingGoat.Models
+@using Kentico.Content.Web.Mvc.Routing
+
+@inject IPreferredLanguageRetriever currentLanguageRetriever
+
+@model ShoppingCartViewModel
+
+@{
+    var languageName = currentLanguageRetriever.Get();
+}
+
+<div class="cart-card">
+    @foreach (var cartItem in Model.Items)
+    {
+        <partial name="_ShoppingCartItem" model="new ShoppingCartItemDisplayViewModel(cartItem, languageName)" />
+    }
+</div>
+
+@if (Model.OrderDiscountText != null)
+{
+    <p class="cart-banner">@Model.OrderDiscountText</p>
+}
+
+
+@if (Model.FreeShippingText != null)
+{
+    <p class="cart-banner">@Model.FreeShippingText</p>
+}
+
+<partial name="_ShoppingCartCoupons" model="Model" />

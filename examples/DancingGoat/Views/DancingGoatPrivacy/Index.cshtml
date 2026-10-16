@@ -1,0 +1,57 @@
+﻿@using DancingGoat.Helpers
+
+@model DancingGoat.Models.PrivacyViewModel
+
+<div class="page-head">
+    <div class="wrap">
+        <h1 class="display">@HeadingFormatter.Format(HtmlLocalizer["Privacy & cookies"].Value)</h1>
+    </div>
+</div>
+
+<section class="block-tight">
+    <div class="wrap">
+        @if (Model.DemoDisabled)
+        {
+            <div class="prose">
+                <h2>@HtmlLocalizer["Data protection (GDPR) demo must be enabled."]</h2>
+                <p>
+                    @HtmlLocalizer["You can enable data protection demo data in the administration interface (Configuration -> Sample data generator)."]
+                </p>
+            </div>
+        }
+        else
+        {
+            <h2 class="display">@HeadingFormatter.Format(HtmlLocalizer["Your agreed consents"].Value)</h2>
+
+            if (Model.ShowSavedMessage)
+            {
+                <p class="form-note">@HtmlLocalizer["Consent revocation was successful."]</p>
+            }
+            else if (Model.ShowErrorMessage)
+            {
+                <p class="field-validation-error">@HtmlLocalizer["Consent revocation was not successful."]</p>
+            }
+
+            if (Model.Consents.Any())
+            {
+                var routeData = new Dictionary<string, string> { { "returnUrl", Model.PrivacyPageUrl } };
+                <form asp-controller="DancingGoatPrivacy" asp-action="Revoke" asp-all-route-data="routeData" asp-antiforgery="true" method="post">
+                    @foreach (var consent in Model.Consents)
+                    {
+                        <div class="consent-item place-block">
+                            <div>
+                                <h3 class="consent-heading">@consent.Title</h3>
+                                <p>@Html.Raw(@consent.Text)</p>
+                            </div>
+                            <button type="submit" name="consentName" value="@consent.Name" class="btn btn-outline">@HtmlLocalizer["Revoke"]</button>
+                        </div>
+                    }
+                </form>
+            }
+            else
+            {
+                <p>@HtmlLocalizer["There are currently no consents agreed by you."]</p>
+            }
+        }
+    </div>
+</section>

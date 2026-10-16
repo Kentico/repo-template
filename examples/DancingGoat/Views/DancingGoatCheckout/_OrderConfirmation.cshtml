@@ -1,0 +1,102 @@
+﻿@using DancingGoat.Helpers
+@using DancingGoat.Models
+
+@using Kentico.Content.Web.Mvc.Routing
+
+@inject IPreferredLanguageRetriever currentLanguageRetriever
+
+@model CheckoutViewModel
+
+@{
+    var languageName = currentLanguageRetriever.Get();
+}
+
+<div class="page-head">
+    <div class="wrap">
+        <div class="crumb">
+            <form asp-controller="DancingGoatCheckout" asp-action="Index" method="post" id="backToCheckoutForm">
+                <button type="submit" class="crumb-back">&larr; @HtmlLocalizer["Back to checkout"]</button>
+                <input type="hidden" name="CheckoutStep" value="@CheckoutStep.CheckoutCustomer" />
+                <partial name="_ShoppingCartCheckoutCustomerData" model="Model" />
+            </form>
+        </div>
+        <h1 class="display">@HeadingFormatter.Format(HtmlLocalizer["Review your order"].Value)</h1>
+        <div asp-validation-summary="ModelOnly" class="text-danger">@HtmlLocalizer["Your order cannot be completed"]</div>
+    </div>
+</div>
+
+<section class="block-tight">
+    <div class="wrap">
+        <div class="cart-layout">
+            <div class="checkout-card review-left">
+                <div class="review-details">
+                    <div>
+                        <h2 class="display">@HeadingFormatter.Format(HtmlLocalizer["Billing details"].Value)</h2>
+                        <div class="review-lines">
+                            <div><span>@Model.Customer.FirstName</span> <span>@Model.Customer.LastName</span></div>
+                            <div>@Model.Customer.Company</div>
+                            <div>@Model.Customer.Email</div>
+                            <div>@Model.Customer.PhoneNumber</div>
+                        </div>
+                        <div class="review-lines">
+                            <div>@Model.BillingAddress.Line1</div>
+                            <div>@Model.BillingAddress.Line2</div>
+                            <div>@Model.BillingAddress.City</div>
+                            <div><span>@Model.BillingAddress.PostalCode</span> <span>@Model.BillingAddress.State</span></div>
+                            <div>@Model.BillingAddress.Country</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="display">@HeadingFormatter.Format(HtmlLocalizer["Shipping details"].Value)</h2>
+                        @{
+                            if (Model.ShippingAddress.IsSameAsBilling)
+                            {
+                                <div class="review-lines">@HtmlLocalizer["Same as billing"]</div>
+                            }
+                            else
+                            {
+                                <div class="review-lines">
+                                    <div><span>@Model.Customer.FirstName</span> <span>@Model.Customer.LastName</span></div>
+                                    <div>@Model.Customer.Company</div>
+                                    <div>@Model.Customer.Email</div>
+                                    <div>@Model.Customer.PhoneNumber</div>
+                                </div>
+                                <div class="review-lines">
+                                    <div>@Model.ShippingAddress.Line1</div>
+                                    <div>@Model.ShippingAddress.Line2</div>
+                                    <div>@Model.ShippingAddress.City</div>
+                                    <div><span>@Model.ShippingAddress.PostalCode</span> <span>@Model.ShippingAddress.State</span></div>
+                                    <div>@Model.ShippingAddress.Country</div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <h2 class="display review-items-title">@HeadingFormatter.Format(HtmlLocalizer["Ordered items"].Value)</h2>
+                <div class="review-items">
+                    <partial name="_ShoppingCartContentPreview" model="Model.ShoppingCart" />
+                </div>
+            </div>
+
+            <div class="checkout-right">
+                @{
+                    var routeData = new Dictionary<string, string> { { "languageName", languageName } };
+                    <form asp-action="ConfirmOrder" asp-controller="DancingGoatCheckout" asp-all-route-data="routeData" method="post" id="checkoutForm">
+                        <div class="summary-card">
+                            <h3>@HtmlLocalizer["Order summary"]</h3>
+                            <div id="shoppingCartTotals">
+                                <partial name="_ShoppingCartTotalsConfirmation" model='new OrderSummaryViewModel(Model.ShoppingCart, Model.PaymentShipping.ShippingPrice, Model.PaymentShipping.OriginalShippingPrice, Model.PaymentShipping.HasFreeShippingPromotion)' />
+                            </div>
+                        </div>
+                        <div class="checkout-place">
+                            <input type="submit" value="@HtmlLocalizer["Place your order"]" class="btn btn-solid btn-block" />
+                        </div>
+                        <partial name="_ShoppingCartCheckoutCustomerData" model="Model" />
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</section>

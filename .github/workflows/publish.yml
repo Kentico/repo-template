@@ -1,0 +1,70 @@
+# Community family only. Kentico families publish through .azuredevops/pipelines.
+# Requires a nuget.org Trusted Publishing policy for this repository and workflow,
+# and a NUGET_USER repository variable set to the nuget.org account name.
+name: "Publish: NuGet"
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Build, Test, Pack & Publish
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_NOLOGO: 1
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/Kentico.Xperience.RepoTemplate.Admin/Client/package-lock.json
+
+      - name: Restore
+        run: dotnet restore --locked-mode
+
+      # Release build runs npm ci and npm run build for the admin client
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --no-restore
+
+      - name: Pack
+        run: |
+          dotnet pack src/Kentico.Xperience.RepoTemplate.Libs.slnx `
+            --configuration Release `
+            --no-build `
+            --output nupkg
+
+      - name: NuGet login (OIDC)
+        id: nuget_login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+
+      - name: Publish
+        run: |
+          dotnet nuget push nupkg/*.nupkg `
+            --api-key "${{ steps.nuget_login.outputs.NUGET_API_KEY }}" `
+            --source https://api.nuget.org/v3/index.json `
+            --skip-duplicate
