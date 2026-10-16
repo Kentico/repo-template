@@ -1,0 +1,28 @@
+﻿@using DancingGoat.Helpers
+@using DancingGoat.Sections
+
+@model ComponentViewModel<ThreeColumnSectionProperties>
+
+<section class="block @Model.Properties.Theme">
+    <div class="wrap">
+        @if (!string.IsNullOrWhiteSpace(Model.Properties.Title))
+        {
+            <div class="section-head">
+                <div>
+                    <h2 class="display">@HeadingFormatter.Format(Model.Properties.Title)</h2>
+                </div>
+            </div>
+        }
+        <div class="section-surface section-grid section-grid--thirds">
+            <div>
+                <widget-zone allowed-widgets="ZoneRestrictions.GetNarrowZoneRestrictions()" />
+            </div>
+            <div>
+                <widget-zone allowed-widgets="ZoneRestrictions.GetNarrowZoneRestrictions()" />
+            </div>
+            <div>
+                <widget-zone allowed-widgets="ZoneRestrictions.GetNarrowZoneRestrictions()" />
+            </div>
+        </div>
+    </div>
+</section>

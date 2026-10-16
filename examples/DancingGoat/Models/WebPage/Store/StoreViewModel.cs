@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using CMS.ContentEngine;
+using CMS.Websites;
+
+using DancingGoat.Commerce;
+
+namespace DancingGoat.Models
+{
+    public record StoreViewModel(IEnumerable<ProductSectionListViewModel> SelectionProductList, IEnumerable<NavigationItemViewModel> CategoryMenuViewModel) : IWebPageBasedViewModel
+    {
+        /// <inheritdoc/>
+        public IWebPageFieldsSource WebPage { get; init; }
+
+
+        /// <summary>
+        /// Validates and maps <see cref="Store"/> to a <see cref="StoreViewModel"/>.
+        /// </summary>
+        /// <param name="store">Store page.</param>
+        /// <param name="products">Products to be displayed.</param>
+        /// <param name="calculationResultItems">Price calculation results.</param>
+        /// <param name="productPageUrls">Product page URLs.</param>
+        /// <param name="productSectionTagNames">Tag names that define separate sets of product to be displayed.</param>
+        /// <param name="productTagsTaxonomy">"Product tags" taxonomy data</param>
+        /// <param name="languageName">Language name to map.</param>
+        /// <param name="categoryMenuViewModel">Category menu view model to map.</param>
+        /// <param name="productIdsWithVariants">Content item identifiers of products that have variants.</param>
+        /// <param name="freeShippingProductIds">Content item identifiers of products that alone qualify for free shipping.</param>
+        public static StoreViewModel GetViewModel(Store store, IEnumerable<IProductFields> products, IEnumerable<DancingGoatPriceCalculationResultItem> calculationResultItems, IDictionary<int, string> productPageUrls, IEnumerable<string> productSectionTagNames, TaxonomyData productTagsTaxonomy, string languageName, IEnumerable<NavigationItemViewModel> categoryMenuViewModel, ISet<int> productIdsWithVariants, ISet<int> freeShippingProductIds)
+        {
+            var productSections = new List<ProductSectionListViewModel>();
+
+            var productSectionTags = productTagsTaxonomy.Tags
+                .Where(t => productSectionTagNames.Contains(t.Name, StringComparer.InvariantCultureIgnoreCase))
+                .OrderBy(t => productSectionTagNames.ToList().IndexOf(t.Name));
+
+            foreach (var productSectionTag in productSectionTags)
+            {
+                productSections.Add(new ProductSectionListViewModel(
+                    productSectionTag.Title,
+                    products
+                        .Where(product => product.ProductFieldTags.Any(t => t.Identifier == productSectionTag.Identifier)
+                            && productPageUrls.ContainsKey((product as IContentItemFieldsSource).SystemFields.ContentItemID))
+                        .Select(product =>
+                        {
+                            productPageUrls.TryGetValue((product as IContentItemFieldsSource).SystemFields.ContentItemID, out var pageUrl);
+                            var productCalculationItem = calculationResultItems.FirstOrDefault(item => item.ProductIdentifier.Identifier == (product as IContentItemFieldsSource).SystemFields.ContentItemID);
+
+                            return ProductListItemViewModel.GetViewModel(
+                                product,
+                                productCalculationItem,
+                                pageUrl,
+                                ProductListItemTagViewModel.GetViewModel(productSectionTag.Title),
+                                productIdsWithVariants.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID),
+                                freeShippingProductIds.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID));
+                        })
+                ));
+            }
+
+            return new StoreViewModel(productSections, categoryMenuViewModel)
+            {
+                WebPage = store
+            };
+        }
+    }
+}

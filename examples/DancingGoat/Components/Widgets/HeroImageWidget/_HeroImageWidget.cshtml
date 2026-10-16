@@ -1,0 +1,71 @@
+﻿@using DancingGoat.Helpers
+@using DancingGoat.InlineEditors
+@using DancingGoat.Widgets
+
+@model HeroImageWidgetViewModel
+
+<header class="hero">
+    <div class="hero-card">
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img class="hero-bg" src="@Url.Content(Model.ImagePath)" alt="" />
+        }
+        <div class="hero-content">
+            <h1 class="display">
+                @if (Context.Kentico().PageBuilder().EditMode)
+                {
+                    <partial name="~/Components/InlineEditors/TextEditor/_TextEditor.cshtml"
+                             model="new TextEditorViewModel
+                                {
+                                    PropertyName = nameof(HeroImageWidgetProperties.Text),
+                                    Text = Model.Text,
+                                }" />
+                }
+                else
+                {
+                    @HeadingFormatter.Format(Model.Text)
+                }
+            </h1>
+            @if (!string.IsNullOrWhiteSpace(Model.Subtext))
+            {
+                <p class="hero-text">@Model.Subtext</p>
+            }
+            <div class="hero-actions">
+                @if (Context.Kentico().PageBuilder().EditMode)
+                {
+                    <div class="btn btn-solid">
+                        <partial name="~/Components/InlineEditors/TextEditor/_TextEditor.cshtml"
+                                 model="new TextEditorViewModel
+                                    {
+                                        PropertyName = nameof(HeroImageWidgetProperties.ButtonText),
+                                        Text = Model.ButtonText,
+                                    }" />
+                    </div>
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.ButtonText))
+                {
+                    <a href="@Url.Content(Model.ButtonTarget)" class="btn btn-solid">
+                        @Model.ButtonText <span class="arrow">&rarr;</span>
+                    </a>
+                }
+                @if (Context.Kentico().PageBuilder().EditMode)
+                {
+                    <div class="btn btn-ghost">
+                        <partial name="~/Components/InlineEditors/TextEditor/_TextEditor.cshtml"
+                                 model="new TextEditorViewModel
+                                    {
+                                        PropertyName = nameof(HeroImageWidgetProperties.SecondaryButtonText),
+                                        Text = Model.SecondaryButtonText,
+                                    }" />
+                    </div>
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.SecondaryButtonText))
+                {
+                    <a href="@Url.Content(Model.SecondaryButtonTarget)" class="btn btn-ghost">
+                        @Model.SecondaryButtonText
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</header>

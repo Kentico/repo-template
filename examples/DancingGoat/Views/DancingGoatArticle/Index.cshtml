@@ -1,0 +1,22 @@
+﻿@using DancingGoat.Helpers
+@using DancingGoat.Models
+
+@model ArticlesSectionViewModel
+
+<div class="page-head">
+    <div class="wrap">
+        <h1 class="display">@HeadingFormatter.Format(HtmlLocalizer["Articles"].Value)</h1>
+        <p class="lede">@HtmlLocalizer["Notes on sourcing, roasting and brewing from the Dancing Goat team."]</p>
+    </div>
+</div>
+
+<section class="block-tight">
+    <div class="wrap">
+        <div class="articles-grid-page">
+            @foreach (var article in Model.Articles)
+            {
+                <partial name="_ArticleTile" model="ArticleTileViewModel.GetViewModel(article)" />
+            }
+        </div>
+    </div>
+</section>

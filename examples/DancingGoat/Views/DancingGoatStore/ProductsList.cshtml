@@ -1,0 +1,15 @@
+﻿@using DancingGoat.Helpers
+@using DancingGoat.Models
+
+@model ProductSectionListViewModel
+
+@if (Model.Items.Any())
+{
+    <div class="section-head">
+        <div>
+            <h2 class="display">@HeadingFormatter.Format(Model.Title)</h2>
+        </div>
+    </div>
+
+    <partial name="_ProductListItemGrid" model='new ProductListItemGridViewModel(Model.Items)' />
+}

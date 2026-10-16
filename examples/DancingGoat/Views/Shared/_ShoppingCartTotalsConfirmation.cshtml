@@ -1,0 +1,25 @@
+﻿@using DancingGoat.Models
+
+@model OrderSummaryViewModel
+
+@if (Model.ShoppingCart.TotalDiscount > 0)
+{
+    <partial name="_CartTotalLine" model='new CartTotalLineViewModel(HtmlLocalizer["You save"], Model.ShoppingCart.TotalDiscount)' />
+}
+<partial name="_CartTotalLine" model='new CartTotalLineViewModel(HtmlLocalizer["Cart total"], Model.ShoppingCart.TotalWithoutShippingAndTax)' />
+@if (Model.HasShippingDiscount)
+{
+    <div class="sum-row">
+        <span>@HtmlLocalizer["Shipping"]</span>
+        <span>
+            <span class="price-old"><price>@Model.OriginalShippingPrice</price></span>
+            <price>@Model.ShippingPrice</price>
+        </span>
+    </div>
+}
+else
+{
+    <partial name="_CartTotalLine" model='new CartTotalLineViewModel(HtmlLocalizer["Shipping"], Model.ShippingPrice)' />
+}
+<partial name="_CartTotalLine" model='new CartTotalLineViewModel(HtmlLocalizer["Tax"], Model.ShoppingCart.TotalTax)' />
+<partial name="_CartTotalLine" model='new CartTotalLineViewModel(HtmlLocalizer["Total amount"], Model.ShoppingCart.TotalPrice, RowCssClass: "total")' />

@@ -1,0 +1,16 @@
+﻿@using DancingGoat.Sections
+
+@model Kentico.PageBuilder.Web.Mvc.ComponentViewModel<ThemeSectionProperties>
+
+<section class="block @Model.Properties.Theme">
+    <div class="wrap">
+        <div class="section-surface section-grid section-grid--50-50">
+            <div>
+                <widget-zone allowed-widgets="ZoneRestrictions.GetNarrowZoneRestrictions()" />
+            </div>
+            <div>
+                <widget-zone allowed-widgets="ZoneRestrictions.GetNarrowZoneRestrictions()" />
+            </div>
+        </div>
+    </div>
+</section>

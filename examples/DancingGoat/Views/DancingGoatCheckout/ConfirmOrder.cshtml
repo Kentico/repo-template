@@ -1,0 +1,15 @@
+﻿@using DancingGoat.Helpers
+@using DancingGoat.Models
+
+@model ConfirmOrderViewModel
+
+@{
+    ViewBag.Title = HtmlLocalizer["Order created"].Value;
+}
+
+<div class="page-head">
+    <div class="wrap">
+        <h1 class="display">@HeadingFormatter.Format(HtmlLocalizer["Thank you"].Value)</h1>
+        <p class="lede">@HtmlLocalizer[$"Your order was created. Order number: {Model.OrderNumber}"]</p>
+    </div>
+</div>

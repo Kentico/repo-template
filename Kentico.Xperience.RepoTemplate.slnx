@@ -1,2 +1,12 @@
 <Solution>
+  <Folder Name="/examples/">
+    <Project Path="examples/DancingGoat/DancingGoat.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Kentico.Xperience.RepoTemplate.Admin/Kentico.Xperience.RepoTemplate.Admin.csproj" />
+    <Project Path="src/Kentico.Xperience.RepoTemplate/Kentico.Xperience.RepoTemplate.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Kentico.Xperience.RepoTemplate.Tests/Kentico.Xperience.RepoTemplate.Tests.csproj" />
+  </Folder>
 </Solution>

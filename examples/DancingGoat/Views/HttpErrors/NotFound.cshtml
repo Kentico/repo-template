@@ -1,0 +1,15 @@
+﻿@using DancingGoat.Helpers
+
+@{
+    ViewBag.Title = HtmlLocalizer["Oops! Page not found..."].Value;
+}
+
+<div class="page-head">
+    <div class="wrap">
+        <h1 class="display">@HeadingFormatter.Format(HtmlLocalizer["Oops! Page not found"].Value)</h1>
+        <p class="lede">@HtmlLocalizer["We are really sorry, something has gone wrong. It seems that page you requested doesn't exist."]</p>
+        <div class="page-content">
+            <a class="btn btn-solid" href="~/">@HtmlLocalizer["Back to the home page"] <span class="arrow">&rarr;</span></a>
+        </div>
+    </div>
+</div>

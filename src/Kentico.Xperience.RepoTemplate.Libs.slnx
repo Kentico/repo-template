@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Kentico.Xperience.RepoTemplate.Admin/Kentico.Xperience.RepoTemplate.Admin.csproj" />
+  <Project Path="Kentico.Xperience.RepoTemplate/Kentico.Xperience.RepoTemplate.csproj" />
+</Solution>

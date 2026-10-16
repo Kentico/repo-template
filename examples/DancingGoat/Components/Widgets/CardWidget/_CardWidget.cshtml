@@ -1,0 +1,17 @@
+﻿@using DancingGoat.InlineEditors
+@using DancingGoat.Widgets
+
+@model DancingGoat.Widgets.CardWidgetViewModel
+
+<div class="card-body">
+    <section class="card-section" background-image-url="@Model.ImagePath">
+        <div class="card-text">
+            <partial name="_EditableText"
+                     model="new TextEditorViewModel
+                            {
+                                PropertyName = nameof(CardWidgetProperties.Text),
+                                Text = Model.Text,
+                            }" />
+        </div>
+    </section>
+</div>

@@ -6,5 +6,7 @@
     <HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
     <Nullable>annotations</Nullable>
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 </Project>
