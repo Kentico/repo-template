@@ -1,7 +1,7 @@
 {
   "name": "kentico-xperience-repotemplate-admin",
   "version": "1.0.0",
-  "description": "Xperience by Kentico: RepoTemplate administration client module.",
+  "description": "---Package description---",
   "private": true,
   "scripts": {
     "start": "webpack serve --mode development",

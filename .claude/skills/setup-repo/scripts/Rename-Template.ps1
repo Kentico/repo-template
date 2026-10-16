@@ -8,12 +8,12 @@
     local-only secrets and ports. Fails if any template token remains afterwards.
 
 .EXAMPLE
-    ./.claude/skills/setup-repo/scripts/Rename-Template.ps1 -Family Labs -Name CoolThing
+    ./.claude/skills/setup-repo/scripts/Rename-Template.ps1 -Family Labs -Name CoolThing [-Example]
 #>
 [CmdletBinding()]
 param (
     [Parameter(Mandatory)]
-    [ValidateSet('Kentico', 'Labs', 'Community', 'Example')]
+    [ValidateSet('Kentico', 'Labs', 'Community')]
     [string]$Family,
 
     # PascalCase identifier, no spaces or periods, e.g. CoolThing
@@ -21,12 +21,21 @@ param (
     [ValidatePattern('^[A-Z][A-Za-z0-9]*$')]
     [string]$Name,
 
-    # Defaults to xperience-by-kentico-<name> (Community: xperience-community-<name>)
+    # Human-readable name with spaces, e.g. "Cool Thing". Defaults to Name split on word boundaries
+    [string]$DisplayName,
+
+    # Example source code repository (not a published library). Labs examples get "labs" in the repository slug
+    [switch]$Example,
+
+    # Defaults to xperience-by-kentico-<name> (Labs example: xperience-by-kentico-labs-<name>; Community: xperience-community-<name>)
     [ValidatePattern('^[a-z0-9][a-z0-9-]*$')]
     [string]$RepoSlug,
 
     # Defaults to Kentico; required for Community
-    [string]$GitHubOrg
+    [string]$GitHubOrg,
+
+    # Print the derived names and exit without changing files
+    [switch]$Preview
 )
 
 $ErrorActionPreference = 'Stop'
@@ -34,15 +43,15 @@ $ErrorActionPreference = 'Stop'
 $root = (git rev-parse --show-toplevel).Trim()
 Set-Location $root
 
-$kebab = ($Name -creplace '(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])', '-').ToLowerInvariant()
+$kebab = ($Name -creplace '(?<=[a-z])(?=[A-Z])|(?<=[A-Z0-9])(?=[A-Z][a-z])', '-').ToLowerInvariant()
 
 $names = switch ($Family) {
     'Kentico' { @{ DotNet = "Kentico.Xperience.$Name"; AdminOrg = 'kentico'; AdminProject = "xperience-$kebab-admin"; Slug = "xperience-by-kentico-$kebab" } }
     'Labs' { @{ DotNet = "Kentico.Xperience.Labs.$Name"; AdminOrg = 'kentico'; AdminProject = "xperience-labs-$kebab-admin"; Slug = "xperience-by-kentico-$kebab" } }
     'Community' { @{ DotNet = "XperienceCommunity.$Name"; AdminOrg = 'xperience'; AdminProject = "community-$kebab-admin"; Slug = "xperience-community-$kebab" } }
-    'Example' { @{ DotNet = "Kentico.Xperience.Examples.$Name"; AdminOrg = 'kentico'; AdminProject = "xperience-examples-$kebab-admin"; Slug = "xperience-by-kentico-$kebab" } }
 }
 
+if ($Example -and $Family -eq 'Labs') { $names.Slug = "xperience-by-kentico-labs-$kebab" }
 if ($RepoSlug) { $names.Slug = $RepoSlug }
 
 if (-not $GitHubOrg) {
@@ -50,8 +59,28 @@ if (-not $GitHubOrg) {
     $GitHubOrg = 'Kentico'
 }
 
+if (-not $DisplayName) { $DisplayName = $Name -creplace '(?<=[a-z])(?=[A-Z])|(?<=[A-Z0-9])(?=[A-Z][a-z])', ' ' }
+$productPrefix = switch ($Family) {
+    'Kentico' { 'Xperience by Kentico' }
+    'Labs' { 'Xperience by Kentico Labs' }
+    'Community' { 'Xperience Community' }
+}
+
 $dotNet = $names.DotNet
 $moduleKey = "$($names.AdminOrg)-$($names.AdminProject)"
+
+function Write-Names {
+    Write-Host "Family:        $Family$(if ($Example) { ' (example)' })"
+    Write-Host ".NET name:     $dotNet (+ $dotNet.Admin, $dotNet.Tests)"
+    Write-Host "Repository:    $GitHubOrg/$($names.Slug)"
+    Write-Host "Admin module:  $moduleKey"
+    Write-Host "Product name:  $productPrefix`: $DisplayName"
+}
+
+if ($Preview) {
+    Write-Names
+    return
+}
 
 # Ordered most-specific first; later tokens are substrings of earlier ones
 $tokens = @(
@@ -66,6 +95,8 @@ $tokens = @(
     , @('Kentico-Xperience-RepoTemplate', $dotNet.Replace('.', '-'))
     , @('Kentico.Xperience.RepoTemplate', $dotNet)
     , @('kentico.xperience.repotemplate', $dotNet.ToLowerInvariant())
+    , @('Xperience by Kentico: Repo Template', "$productPrefix`: $DisplayName")
+    , @('Repo Template', $DisplayName)
     , @('RepoTemplate', $Name)
     , @('repotemplate', $kebab)
 )
@@ -85,7 +116,16 @@ function Get-TemplateFiles {
         Where-Object { $textExtensions -contains [IO.Path]::GetExtension($_) -or $textNames -contains [IO.Path]::GetFileName($_) }
 }
 
-# 1. Replace tokens in file contents (case-sensitive, ordered)
+# 1. Remove template-only CI (the template_smoke job is the last job in ci.yml)
+$ci = Join-Path $root '.github/workflows/ci.yml'
+$ciContent = [IO.File]::ReadAllText($ci)
+$marker = $ciContent.IndexOf('  # Template repository only.')
+if ($marker -ge 0) {
+    [IO.File]::WriteAllText($ci, $ciContent.Substring(0, $marker).TrimEnd() + "`n")
+    Write-Host 'Removed template_smoke job from .github/workflows/ci.yml'
+}
+
+# 2. Replace tokens in file contents (case-sensitive, ordered)
 foreach ($file in Get-TemplateFiles) {
     $content = [IO.File]::ReadAllText((Join-Path $root $file))
     $updated = $content
@@ -98,7 +138,7 @@ foreach ($file in Get-TemplateFiles) {
     }
 }
 
-# 2. Rename files and folders, deepest first
+# 3. Rename files and folders, deepest first
 $paths = git ls-files --cached --others --exclude-standard |
     Where-Object { $_ -notmatch $excluded } |
     ForEach-Object {
@@ -118,7 +158,7 @@ foreach ($path in $paths) {
     }
 }
 
-# 3. Regenerate local-only secrets and ports
+# 4. Regenerate local-only secrets, ports, and license year
 $dg = 'examples/DancingGoat'
 $appPort = Get-Random -Minimum 40000 -Maximum 60000
 $clientPort = Get-Random -Minimum 3010 -Maximum 3100
@@ -140,6 +180,7 @@ Update-File "$dg/appsettings.Development.json" {
     $c = $c -replace '"ServiceDomain": "localhost:\d+"', "`"ServiceDomain`": `"localhost:$appPort`""
     $c -replace "(?s)(`"$([regex]::Escape($moduleKey))`":\s*\{[^}]*`"Port`":\s*)\d+", "`${1}$clientPort"
 }
+Update-File 'LICENSE.md' { param($c) $c -replace 'Copyright \(c\) \d{4}', "Copyright (c) $((Get-Date).Year)" }
 Update-File "$dg/Properties/launchSettings.json" { param($c) $c -replace 'http://localhost:\d+', "http://localhost:$appPort" }
 Update-File '.mcp.json' {
     param($c)
@@ -150,17 +191,14 @@ Get-ChildItem src -Recurse -Filter webpack.config.js -File | Where-Object FullNa
     Update-File ([IO.Path]::GetRelativePath($root, $_.FullName)) { param($c) $c -replace 'port: \d+', "port: $clientPort" }
 }
 
-# 4. Verify no template tokens remain
+# 5. Verify no template tokens remain
 $leftovers = Get-TemplateFiles | ForEach-Object {
-    if ((Split-Path $_ -Leaf) -match '(?i)repo-?template') { "$_ (path)" }
-    Select-String -LiteralPath $_ -Pattern '(?i)repo-?template' | ForEach-Object { "$($_.Path):$($_.LineNumber): $($_.Line.Trim())" }
+    if ((Split-Path $_ -Leaf) -match '(?i)repo[- ]?template') { "$_ (path)" }
+    Select-String -LiteralPath $_ -Pattern '(?i)repo[- ]?template' | ForEach-Object { "$($_.Path):$($_.LineNumber): $($_.Line.Trim())" }
 }
 
 Write-Host ''
-Write-Host "Family:        $Family"
-Write-Host ".NET name:     $dotNet"
-Write-Host "Repository:    $GitHubOrg/$($names.Slug)"
-Write-Host "Admin module:  $moduleKey"
+Write-Names
 Write-Host "Ports:         app $appPort, admin client $clientPort"
 
 if ($leftovers) {

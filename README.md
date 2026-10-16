@@ -6,13 +6,11 @@
 
 ---Lines enclosed by three dashes (like this one) are placeholders and comments to be replaced with specific information or deleted completely.---
 
-### ---Library naming conventions---
+### ---Naming conventions---
 
----Repository name – use "xperience-by-kentico-\<project-name\>"
+---See `.claude/skills/setup-repo/references/naming.md` for repository, .NET, admin module, and display names per family (Kentico, Labs, Community, Example)---
 
----Package Name – use "Xperience by Kentico: \<Project Name\>"
-
-# ---Package Name---
+# Xperience by Kentico: Repo Template
 
 ---Select the correct badge for the support policy---
 
@@ -38,7 +36,7 @@
 
 ---These are all the dependencies required to use (not build) the library---
 
-- [ASP.NET Core 8.0](https://dotnet.microsoft.com/en-us/download)
+- [ASP.NET Core 10.0](https://dotnet.microsoft.com/en-us/download)
 - [Xperience by Kentico](https://docs.kentico.com)
 
 ### Other requirements

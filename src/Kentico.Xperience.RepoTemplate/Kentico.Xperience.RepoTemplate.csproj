@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Product>Xperience by Kentico: RepoTemplate</Product>
+    <Product>Xperience by Kentico: Repo Template</Product>
     <Title>$(Product)</Title>
     <Description>---Package description---</Description>
   </PropertyGroup>

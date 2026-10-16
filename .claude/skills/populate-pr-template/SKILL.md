@@ -68,7 +68,7 @@ Do not infer test pass/fail from local assumptions.
 
 ## Checklist Policy
 
-- Do not include "Tests are passing" as a checkbox in this repo template.
+- Do not include "Tests are passing" as a checkbox in this repository.
 - Reflect test state only in `Validation/Automated` from CI checks.
 
 ## Update Workflow

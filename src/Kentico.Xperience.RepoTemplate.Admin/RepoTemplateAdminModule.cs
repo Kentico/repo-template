@@ -4,7 +4,7 @@ using Kentico.Xperience.RepoTemplate.Admin;
 [assembly: CMS.RegisterModule(typeof(RepoTemplateAdminModule))]
 
 // Adds a new application category
-[assembly: UICategory(RepoTemplateAdminModule.CUSTOM_CATEGORY, "RepoTemplate", Icons.CustomElement, 100)]
+[assembly: UICategory(RepoTemplateAdminModule.CUSTOM_CATEGORY, "Repo Template", Icons.CustomElement, 100)]
 
 namespace Kentico.Xperience.RepoTemplate.Admin;
 

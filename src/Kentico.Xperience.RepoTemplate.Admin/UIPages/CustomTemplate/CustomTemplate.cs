@@ -11,7 +11,7 @@ using Kentico.Xperience.RepoTemplate.Admin;
     "Kentico.Xperience.RepoTemplate.Admin.CustomTemplate",
     typeof(CustomTemplate),
     "repotemplate",
-    "RepoTemplate",
+    "Repo Template",
     RepoTemplateAdminModule.CUSTOM_CATEGORY,
     Icons.Clock,
     "@kentico/xperience-repotemplate-admin/CustomLayout")]

@@ -2,8 +2,6 @@
 
 ---This documents the steps a maintainer or developer would follow to work on the library in their development environment---
 
----Update the details for this project, replacing "repotemplate" and anything else that needs changed---
-
 ## Required Software
 
 The requirements to setup, develop, and build this project are listed below.
@@ -19,7 +17,7 @@ The requirements to setup, develop, and build this project are listed below.
 
 - [Node.js](https://nodejs.org/en/download) LTS or newer
 - [NVM for Windows](https://github.com/coreybutler/nvm-windows) or [NVM for macOS](https://github.com/nvm-sh/nvm) to manage multiple installed versions of Node.js
-- See `engines` in the solution `package.json` for specific version requirements
+- See `engines` in `src/Kentico.Xperience.RepoTemplate.Admin/Client/package.json` for specific version requirements
 
 ### Database
 
@@ -31,7 +29,7 @@ SQL Server 2019 or newer compatible database
 
 ### Database Setup
 
-Running the sample project requires creating a new Xperience by Kentico database using the included template.
+Running the sample project requires creating a new Xperience by Kentico database named `xperience-by-kentico-repotemplate` (see `ConnectionStrings` in `examples/DancingGoat/appsettings.json`) using the included template.
 
 Change directory in your console to `./examples/DancingGoat` and follow the instructions in the Xperience
 documentation on [creating a new database](https://docs.kentico.com/documentation/developers-and-admins/installation#create-the-project-database).
