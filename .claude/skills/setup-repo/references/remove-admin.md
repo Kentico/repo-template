@@ -11,6 +11,7 @@ Done when every item below is removed or edited and `git grep --untracked -n -e 
 - `.github/workflows/ci.yml`: the `Setup Node.js` and `Type-check admin client` steps, and the comment about the npm build
 - `.azuredevops/pipelines/build-and-release.yml` (if present): the Node.js version + `UseNode` steps and the `Admin` artifact
 - `.github/workflows/publish.yml` (if present): the same Node.js step
+- `.github/dependabot.yml`: the `npm` entry
 - `.gitignore`: the `**/Client/dist/*` line
 - `.github/PULL_REQUEST_TEMPLATE.md`: the `### Admin UI / Client` section
 - `.vscode/tasks.json`: every task labelled `npm: ...`; `.vscode/settings.json`: the `eslint.workingDirectories` key (keep the JSON valid)

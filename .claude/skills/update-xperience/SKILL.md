@@ -29,6 +29,8 @@ The script prints the target template's `.mcp.json`. Add any MCP server it has t
 
 Done when the locked restore exits 0.
 
+Then review the `Transitive security pins` group in `Directory.Packages.props`: for each pin, remove it, run `dotnet restore --force-evaluate` and `dotnet nuget why <root .slnx> <package>`, and keep the removal when the resolved version is at least the pinned one and restore reports no NU190x vulnerability warning; otherwise restore the pin. Done when every remaining pin is still needed.
+
 ## 6. Fix breaking changes
 
 Build with `dotnet build --configuration Release --no-restore`. Fix every error in `src/` and `tests/` caused by the new version, guided by the changelog from step 2. Done when the build has no errors.
