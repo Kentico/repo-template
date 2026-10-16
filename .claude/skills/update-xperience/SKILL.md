@@ -19,7 +19,12 @@ Run the same command without `-Preview`. Done when it exits 0, or exits 2 and yo
 
 ## 4. Compare root files the template also ships
 
-The script prints the target template's `.mcp.json`. Add any MCP server it has that the root `.mcp.json` lacks, keeping the root's port and secret. Done when every server in the target file exists in the root file.
+The script prints two paths from the target template:
+
+- `.mcp.json`: add any MCP server it has that the root `.mcp.json` lacks, keeping the root's port and secret.
+- DancingGoat skills: for each skill folder, bring its content into the root `.claude/skills/<name>/`, keeping the root's `description` and the line saying paths are relative to `examples/DancingGoat/`. A skill with no root copy is added the same way.
+
+Done when every MCP server in the target file exists in the root file and every target skill body matches its root copy apart from those two lines.
 
 ## 5. Update lock files
 

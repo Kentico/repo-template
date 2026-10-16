@@ -20,7 +20,7 @@ Template ships buildable, CI-verified projects under sentinel names. New repos a
 - Tests and examples are `IsPackable=false`.
 - Lock files committed; restore with `--locked-mode`.
 - Skills live only in `.claude/skills/`.
-- Agent plans/specs go in `.agent-resources/`.
+- Agent plans/specs go in `.agent-resources/<feature>/` (one folder per feature: `PLAN.md`, `STATUS.md`, `implementation-spec-<n>.md`). New repos start with an empty `.agent-resources/.gitkeep`.
 - Naming, tokens, and per-family edits: single source of truth is `.claude/skills/setup-repo/references/` (`naming.md`, `family-edits.md`, `remove-admin.md`).
 
 ## Slices
@@ -37,6 +37,8 @@ Template ships buildable, CI-verified projects under sentinel names. New repos a
 - 2026-10-15: admin module key format `<prefix>-<name>-admin` confirmed.
 - 2026-10-16: core (no suffix) + `.Admin` project; admin UI projects always end in `.Admin`, client module in `-admin`. DancingGoat references core and `.Admin` unconditionally; its `SeparatedAdmin` option is ignored (almost no Xperience apps separate the admin).
 - 2026-10-16: families are Kentico, Labs, Community (support policy). Example is a separate choice under any family: not packed or published; Labs examples put `labs` in the repo slug. Product names: `Xperience by Kentico: X`, `Xperience by Kentico Labs: X`, `Xperience Community: X`.
+- 2026-10-16: planning docs are per feature under `.agent-resources/<feature>/`; `setup-repo` deletes the template's feature folders.
+- 2026-10-16: DancingGoat `design-conventions` skill lives at the root `.claude/skills/` (template content, DancingGoat-scoped description, paths-relative note); `update-xperience` strips `.claude`/`.github` from pristines and hands the target skill to the agent for comparison.
 
 ## Slice log
 

@@ -8,7 +8,7 @@ Follow the instructions in the [Installation](https://docs.xperience.io/x/DQKQC)
 
 ## AI-assisted development
 
-The project is set up for AI coding assistants: agent instructions, a design-guidance skill, and the Kentico [Documentation MCP](https://docs.kentico.com/x/mcp_server_xp) and [Management MCP](https://docs.kentico.com/x/management_api_xp) servers configured in `.mcp.json`.
+The project is set up for AI coding assistants: agent instructions (`AGENTS.md`), a design-guidance skill (`.claude/skills/design-conventions` at the repository root), and the Kentico [Documentation MCP](https://docs.kentico.com/x/mcp_server_xp) and [Management MCP](https://docs.kentico.com/x/management_api_xp) servers configured in the repository root `.mcp.json`.
 
 To learn more about Kentico's suite of AI development tools, see the [KentiCopilot](https://docs.kentico.com/x/kenticocopilot_guides) documentation. 
 

@@ -42,9 +42,9 @@ Replace `---Package description---` in each `src/` csproj `<Description>` and in
 ## 7. Remove template-only material
 
 - the `---Template info---` section at the top of `README.md` (through the line before `# `)
-- every file in `.agent-resources/`, replaced by `STATUS.md` (heading `# Status`; sections `## Current slice`, `## Components`, `## Open checks`, `## Pending decisions`) and `PLAN.md` (heading `# Plan`; sections `## Research`, `## Design rules`, `## Decisions`, `## Slice log`), each section holding `- None.`
+- every feature folder in `.agent-resources/` (the template's own planning), leaving only an empty `.agent-resources/.gitkeep`; the new repository's features get their own folders later (see `AGENTS.md`)
 
-Done when `README.md` starts with the `# ` heading and `.agent-resources/` holds only the two stubs.
+Done when `README.md` starts with the `# ` heading and `.agent-resources/` holds only `.gitkeep`.
 
 ## 8. Rewrite docs
 

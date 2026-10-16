@@ -13,10 +13,10 @@
 - `examples/DancingGoat` is template-generated. When you change it beyond demonstrating this repository's library (project references, settings, startup), record the change in `.claude/skills/update-xperience/references/dancinggoat-overlay.md` so updates keep it.
 - `examples/DancingGoat/AGENTS.md` has instructions for the sample app.
 
-## Planning docs (`.agent-resources/`)
+## Planning docs (`.agent-resources/<feature>/`)
 
-Write all agent plans, research, and implementation specs to `.agent-resources/`, not elsewhere in the repo.
+Each feature gets its own folder, `.agent-resources/<feature>/` (kebab-case name). Write all agent plans, research, and implementation specs for that feature there, not elsewhere in the repo. Before working on an existing feature, read its `STATUS.md`.
 
-- `STATUS.md` – single source for current state (components, open checks, pending decisions). Update after each slice or when an item closes.
-- `PLAN.md` – research, design rules, component catalog, decisions, append-only slice log. Don't track status there.
-- `implementation-spec-*.md` – scope of each slice.
+- `STATUS.md` – single source for the feature's current state (components, open checks, pending decisions). Update after each slice or when an item closes.
+- `PLAN.md` – the feature's research, design rules, component catalog, decisions, append-only slice log. Don't track status there.
+- `implementation-spec-<n>.md` – scope of slice `<n>` of the feature.

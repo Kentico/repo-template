@@ -75,7 +75,7 @@ function New-Pristine($templateVersion, $name) {
 # Removes files the repository keeps elsewhere and pins generated random values,
 # so the merge only sees real template changes
 function Step-Normalize($dg) {
-    foreach ($item in 'Directory.Packages.props', '.github', '.config', '.mcp.json') {
+    foreach ($item in 'Directory.Packages.props', '.github', '.claude', '.config', '.mcp.json') {
         $path = Join-Path $dg $item
         if (Test-Path $path) { Remove-Item $path -Recurse -Force }
     }
@@ -103,6 +103,9 @@ $targetTools = Get-Content (Join-Path $target.DancingGoat '.config/dotnet-tools.
 $targetMcp = Join-Path $target.DancingGoat '.mcp.json'
 $targetMcpCopy = Join-Path $work 'target.mcp.json'
 if (Test-Path $targetMcp) { Copy-Item $targetMcp $targetMcpCopy }
+$targetSkills = Join-Path $target.DancingGoat '.github/skills'
+$targetSkillsCopy = Join-Path $work 'target-skills'
+if (Test-Path $targetSkills) { Copy-Item $targetSkills $targetSkillsCopy -Recurse }
 
 Step-Normalize $base.DancingGoat
 Step-Normalize $target.DancingGoat
@@ -206,6 +209,9 @@ Write-Host "Updated $current -> $Version"
 Write-Host "Work folder (pristine projects, merge repo): $work"
 if (Test-Path $targetMcpCopy) {
     Write-Host "Target .mcp.json for comparison with the root .mcp.json: $targetMcpCopy"
+}
+if (Test-Path $targetSkillsCopy) {
+    Write-Host "Target DancingGoat skills for comparison with the root .claude/skills: $targetSkillsCopy"
 }
 
 if ($conflicts.Count -gt 0) {

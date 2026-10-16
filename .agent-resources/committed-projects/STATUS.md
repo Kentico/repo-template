@@ -19,6 +19,7 @@ All planned slices (1–5) done. Branch `feat/committed-projects`; nothing has r
 | `publish.yml` (Community) | written, not yet run |
 | `update-xperience` skill + script | done; real run 31.9.2 → 31.9.3, conflict path tested |
 | `dependabot.yml` | done, not yet run on GitHub |
+| `design-conventions` skill (root) | done; recovered full content from 31.9.3 template (DancingGoat copy was a stub importing the removed `.github/skills`) |
 | README / docs | tokenized; rewritten per repo by `setup-repo` step 8 |
 
 ## Open checks

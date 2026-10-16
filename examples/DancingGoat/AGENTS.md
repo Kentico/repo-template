@@ -57,9 +57,8 @@ If you change the site's content model (add or remove fields, define new content
 
 ## Kentico MCP Servers
 
-Both servers are configured in `.mcp.json`. The Management MCP reads the instance URL and secret from that file; both
-values are generated when the project is installed from the template and mirror the `ManagementApi` section of
-`appsettings.Development.json`.
+Both servers are configured in the repository root `.mcp.json`. The Management MCP reads the instance URL and secret from that file; both
+values mirror the `ManagementApi` section of `appsettings.Development.json`.
 
 - **Kentico Docs MCP** (`kentico-docs-mcp`) is the **primary source** for any question about Xperience by Kentico APIs, configuration, and usage patterns. Prefer it over web search and over prior knowledge.
 - **Kentico Management MCP** (`xperience-management-mcp`) is used to work with content in the **running local** instance (content types, content items, pages, Page Builder). Prefer it over manual changes in the admin UI.

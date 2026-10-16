@@ -3,8 +3,8 @@
     Renames the repository template's sentinel tokens, files, and folders for a new project.
 
 .DESCRIPTION
-    One-time setup step. Replaces every template token (see .agent-resources/PLAN.md in the
-    template repository) in tracked text files, renames files and folders, and regenerates
+    One-time setup step. Replaces every template token (see ../references/naming.md)
+    in tracked text files, renames files and folders, and regenerates
     local-only secrets and ports. Fails if any template token remains afterwards.
 
 .EXAMPLE
