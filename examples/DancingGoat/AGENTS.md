@@ -35,6 +35,7 @@
 | Rebuild component bundles | `npm run build:bundles`                     |
 | Recompile styles + bundles | `npm run build`                            |
 | Accessibility scan        | `npm run a11y -- <url> [<url> ...]`         |
+| Install axe driver (once, `.npmrc` skips install scripts) | `npm rebuild chromedriver --ignore-scripts=false` |
 
 ## Content changes
 

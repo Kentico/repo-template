@@ -104,8 +104,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
+      # Pinned; dependabot does not update service images - bump by hand
       mailpit:
-        image: axllent/mailpit:latest
+        image: axllent/mailpit:v1.31.6
         ports:
           - 1025:1025
           - 8025:8025
@@ -178,13 +179,15 @@ jobs:
         working-directory: tests/e2e
         run: npm test
 
+      # Failures only: artifacts of public repositories are downloadable by anyone, and
+      # traces include signed-in admin pages
       - name: Upload Playwright report
-        if: always() && env.HAS_LICENSE == 'true'
+        if: failure() && env.HAS_LICENSE == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: tests/e2e/playwright-report
-          retention-days: 14
+          retention-days: 7
 
   # Template repository only. Removed by the setup-repo skill.
   template_smoke:

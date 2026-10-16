@@ -36,6 +36,7 @@ One-command local startup for DancingGoat and the template's libraries, and Play
 - 2026-10-16: `dbmanager` owns `CMSHashStringSalt`; setup no longer generates it (changed on `committed-projects`).
 - 2026-10-16: e2e needs a licensed instance. Local: `-LicenseFile` / `XPERIENCE_LICENSE_FILE`. CI: `XPERIENCE_LICENSE_KEY` repository secret (also as a Dependabot secret); e2e skips when unavailable. Community repos bring their own license.
 - 2026-10-16: `Initialize-Database.ps1` moves dbmanager's connection string + salt into DancingGoat user secrets (not in CI); a `setup-local` skill guides new clones.
+- 2026-10-16: CI secret hardening: Playwright report uploaded on failure only (7 days; public artifacts, admin traces); `.npmrc` `ignore-scripts=true` in admin Client, `tests/e2e`, DancingGoat (chromedriver for `npm run a11y` via one-time `npm rebuild`; npm `allowScripts` approvals are version-pinned and lose to `ignore-scripts`); Mailpit image pinned (dependabot doesn't update service images).
 
 ## Slice log
 

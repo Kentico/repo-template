@@ -21,6 +21,8 @@ Slice 3 (CI e2e job) done locally; not yet run on GitHub. Next: 4 – Aspire App
 - CI: `XPERIENCE_LICENSE_KEY` repository secret + same-named Dependabot secret; e2e steps skip when absent (fork PRs).
 - Aspire package versions and agent tooling (`aspire` CLI / MCP) current state.
 
+- `axllent/mailpit` service image pinned to `v1.31.6` in `ci.yml`; bump by hand.
+
 ## Pending decisions
 
 - None.
