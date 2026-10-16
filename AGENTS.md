@@ -12,6 +12,7 @@
 - `Kentico.Xperience.*` NuGet and `@kentico/*` npm versions change only through the `update-xperience` skill, which also regenerates `examples/DancingGoat` from the matching project template.
 - `examples/DancingGoat` is template-generated. When you change it beyond demonstrating this repository's library (project references, settings, startup), record the change in `.claude/skills/update-xperience/references/dancinggoat-overlay.md` so updates keep it.
 - `examples/DancingGoat/AGENTS.md` has instructions for the sample app.
+- Run the sample with `aspire run` (`examples/AppHost`); the `aspire` MCP server lists resources, shows logs, and restarts them. Update Aspire with `aspire update` (or the grouped dependabot PR) and keep the `Aspire.AppHost.Sdk` version in `AppHost.csproj` on the same version.
 
 ## Planning docs (`.agent-resources/<feature>/`)
 

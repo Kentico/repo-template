@@ -15,7 +15,11 @@
         "MANAGEMENT_API_URL": "http://localhost:54851/kentico-api/management",
         "MANAGEMENT_API_SECRET": "mcp_secret_7BEBD4BA-F891-408B-8A36-E892857D5EA1"
       }
+    },
+    "aspire": {
+      "type": "stdio",
+      "command": "aspire",
+      "args": ["agent", "mcp"]
     }
   }
 }
-

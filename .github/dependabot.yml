@@ -9,6 +9,9 @@ updates:
     ignore:
       - dependency-name: "Kentico.Xperience.*"
     groups:
+      # Bumps together; keep the Aspire.AppHost.Sdk version in examples/AppHost/AppHost.csproj in step
+      aspire:
+        patterns: ["Aspire.*", "CommunityToolkit.Aspire.*"]
       nuget:
         update-types: [minor, patch]
 

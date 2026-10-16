@@ -33,15 +33,19 @@ Run `./scripts/Initialize-Database.ps1 -LicenseFile <path>`, adding `-ServerName
 
 Done when all four exit 0.
 
-## 5. Verify
+## 5. Offer Aspire
+
+If the `aspire` CLI is installed (`aspire --version`), tell the user `aspire run` starts DancingGoat, the admin client dev server, and Mailpit together, using the database from step 3. Mention that `aspire agent init` installs Aspire's agent skills but also adds Aspire telemetry hooks to their global agent settings unless `ASPIRE_CLI_TELEMETRY_OPTOUT=true` is set; run it only if the user asks. Done when the user has been told.
+
+## 6. Verify
 
 Run `dotnet run --project examples/DancingGoat --no-build -- --kxp-db-status --format json`. Done when `state` is `Ready`. For any other state, follow its `message`.
 
-## 6. Report
+## 7. Report
 
 Tell the user:
 
 - the site URL (`applicationUrl` in `examples/DancingGoat/Properties/launchSettings.json`) and the administration at `<url>/admin`, user `administrator`, password `Pass@12345` (or `XPERIENCE_ADMIN_PASSWORD`)
 - whether the license was installed
-- how to work on the admin client: `npm start` in `src/*/Client` (Proxy mode) alongside `dotnet run --project examples/DancingGoat`
+- how to work on the admin client: `aspire run`, or `npm start` in `src/*/Client` (Proxy mode) alongside `dotnet run --project examples/DancingGoat`
 - how to run e2e tests: `tests/e2e/README.md`

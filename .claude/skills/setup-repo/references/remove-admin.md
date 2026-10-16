@@ -12,6 +12,7 @@ Done when every item below is removed or edited and `git grep --untracked -n -e 
 - `.azuredevops/pipelines/build-and-release.yml` (if present): the Node.js version + `UseNode` steps and the `Admin` artifact
 - `.github/workflows/publish.yml` (if present): the same Node.js step
 - `.github/dependabot.yml`: the `npm` entry
+- `examples/AppHost/AppHost.cs`: the `admin-client` resource and its comment
 - `.gitignore`: the `**/Client/dist/*` line
 - `.github/PULL_REQUEST_TEMPLATE.md`: the `### Admin UI / Client` section
 - `.vscode/tasks.json`: every task labelled `npm: ...`; `.vscode/settings.json`: the `eslint.workingDirectories` key (keep the JSON valid)

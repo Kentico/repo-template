@@ -169,7 +169,21 @@ function Update-File($path, [scriptblock]$transform) {
     [IO.File]::WriteAllText($full, (& $transform $content))
 }
 
-Update-File "$dg/DancingGoat.csproj" { param($c) $c -replace '<UserSecretsId>[^<]+</UserSecretsId>', "<UserSecretsId>$([guid]::NewGuid())</UserSecretsId>" }
+foreach ($project in "$dg/DancingGoat.csproj", 'examples/AppHost/AppHost.csproj') {
+    Update-File $project { param($c) $c -replace '<UserSecretsId>[^<]+</UserSecretsId>', "<UserSecretsId>$([guid]::NewGuid())</UserSecretsId>" }
+}
+
+# Aspire dashboard / resource service / OTLP ports: each committed port gets one new random port
+Update-File 'examples/AppHost/Properties/launchSettings.json' {
+    param($c)
+    $portMap = @{}
+    [regex]::Replace($c, 'localhost:(\d+)', {
+            param($match)
+            $old = $match.Groups[1].Value
+            if (-not $portMap.ContainsKey($old)) { $portMap[$old] = Get-Random -Minimum 15000 -Maximum 25000 }
+            "localhost:$($portMap[$old])"
+        })
+}
 Update-File "$dg/appsettings.Development.json" {
     param($c)
     $c = $c -replace '"Secret": "[^"]*"', "`"Secret`": `"$secret`""

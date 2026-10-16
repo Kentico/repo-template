@@ -15,7 +15,7 @@ Page objects (`admin/*Page.ts`) hold selectors for UI this repository does not o
 ## Requirements
 
 - A DancingGoat database with an Xperience **license**: `./scripts/Initialize-Database.ps1 -LicenseFile <path>` (see `docs/Contributing-Setup.md`). Without a license the live site returns 500 and the administration hides custom applications.
-- In the Development environment the admin client runs in Proxy mode: start `npm start` in `src/Kentico.Xperience.RepoTemplate.Admin/Client` first.
+- In the Development environment the admin client runs in Proxy mode: start `npm start` in `src/Kentico.Xperience.RepoTemplate.Admin/Client` first, or run everything with `aspire run` (see `docs/Contributing-Setup.md`).
 
 ## Run
 

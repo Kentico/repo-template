@@ -41,6 +41,24 @@ Running the sample project requires an Xperience by Kentico database. AI agents 
 - `-Recreate` drops and recreates an existing database.
 - The script runs [`kentico-xperience-dbmanager`](https://docs.kentico.com/documentation/developers-and-admins/installation#create-the-project-database), which writes the connection string and a new `CMSHashStringSalt` to `examples/DancingGoat/appsettings.json`. Don't commit those changes.
 
+### Run with Aspire
+
+[Aspire](https://aspire.dev) starts everything together: DancingGoat, the admin client dev server (Proxy mode), and Mailpit for emails. Install the [Aspire CLI](https://aspire.dev/get-started/install-cli/), then from the repository root:
+
+```powershell
+aspire run
+```
+
+The dashboard links the live site and the administration. By default DancingGoat uses the database from `scripts/Initialize-Database.ps1`. To use a SQL Server container instead (Docker required; the database is created on first run), set `Sql:UseExistingServer` to `false` in `examples/AppHost` user secrets:
+
+```powershell
+dotnet user-secrets set "Sql:UseExistingServer" false --project examples/AppHost
+```
+
+Set `XPERIENCE_LICENSE_FILE` before `aspire run` to install the license into a new container database.
+
+The root `.mcp.json` registers the Aspire MCP server (`aspire agent mcp`), so AI agents can list resources, read logs, and restart them. `aspire agent init` can also install Aspire's agent skills; note that it adds Aspire telemetry hooks to your global agent settings unless `ASPIRE_CLI_TELEMETRY_OPTOUT=true` is set.
+
 ### End-to-end tests
 
 Playwright tests for the live site and the administration live in `tests/e2e`; they need a licensed database. See [`tests/e2e/README.md`](../tests/e2e/README.md).

@@ -37,9 +37,11 @@ One-command local startup for DancingGoat and the template's libraries, and Play
 - 2026-10-16: e2e needs a licensed instance. Local: `-LicenseFile` / `XPERIENCE_LICENSE_FILE`. CI: `XPERIENCE_LICENSE_KEY` repository secret (also as a Dependabot secret); e2e skips when unavailable. Community repos bring their own license.
 - 2026-10-16: `Initialize-Database.ps1` moves dbmanager's connection string + salt into DancingGoat user secrets (not in CI); a `setup-local` skill guides new clones.
 - 2026-10-16: CI secret hardening: Playwright report uploaded on failure only (7 days; public artifacts, admin traces); `.npmrc` `ignore-scripts=true` in admin Client, `tests/e2e`, DancingGoat (chromedriver for `npm run a11y` via one-time `npm rebuild`; npm `allowScripts` approvals are version-pinned and lose to `ignore-scripts`); Mailpit image pinned (dependabot doesn't update service images).
+- 2026-10-16: Aspire defaults to the existing server (DancingGoat user secrets); the SQL container is opt-in (`Sql:UseExistingServer=false`). dbmanager keeps owning the salt; the script reuses the one in DancingGoat user secrets. CI stays on service containers. Aspire MCP server committed; Aspire skills not (`aspire agent init` adds global telemetry hooks).
 
 ## Slice log
 
 - 2026-10-16 – Slice 1: `scripts/Initialize-Database.ps1` (dbmanager wrapper, defaults from DancingGoat connection string, optional license, `-Recreate`); contributing docs updated. Verified against Docker SQL Server 2022.
 - 2026-10-16 – Slice 2: `tests/e2e` Playwright project (live-site + admin), user-secrets handoff in the database script, dependabot/docs/setup wiring. 6/6 pass locally with a license.
 - 2026-10-16 – Slice 3: CI `e2e` job (mssql + Mailpit services, license secret gate, Release build, Playwright) + `appsettings.CI.json`. Local CI simulation 6/6.
+- 2026-10-16 – Slice 4: `examples/AppHost` (Mailpit, DancingGoat, admin client, optional SQL container + database-init), script `-IfNotReady`/`-SaveTo`, Aspire MCP, rename coverage. Both modes + e2e verified locally.
