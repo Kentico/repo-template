@@ -29,7 +29,7 @@ SQL Server 2019 or newer compatible database
 
 ### Database Setup
 
-Running the sample project requires an Xperience by Kentico database. Create it from the repository root:
+Running the sample project requires an Xperience by Kentico database. AI agents can do the whole local setup (SQL Server, database, dependencies, verification) with the `setup-local` skill. To create the database by hand, run from the repository root:
 
 ```powershell
 ./scripts/Initialize-Database.ps1
