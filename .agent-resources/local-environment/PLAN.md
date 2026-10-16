@@ -34,7 +34,10 @@ One-command local startup for DancingGoat and the template's libraries, and Play
 
 - 2026-10-16: add both e2e (first) and Aspire; Docker acceptable for Aspire, local SQL Server should also work; no license needed for database creation.
 - 2026-10-16: `dbmanager` owns `CMSHashStringSalt`; setup no longer generates it (changed on `committed-projects`).
+- 2026-10-16: e2e needs a licensed instance. Local: `-LicenseFile` / `XPERIENCE_LICENSE_FILE`. CI: `XPERIENCE_LICENSE_KEY` repository secret (also as a Dependabot secret); e2e skips when unavailable. Community repos bring their own license.
+- 2026-10-16: `Initialize-Database.ps1` moves dbmanager's connection string + salt into DancingGoat user secrets (not in CI); a `setup-local` skill guides new clones.
 
 ## Slice log
 
 - 2026-10-16 – Slice 1: `scripts/Initialize-Database.ps1` (dbmanager wrapper, defaults from DancingGoat connection string, optional license, `-Recreate`); contributing docs updated. Verified against Docker SQL Server 2022.
+- 2026-10-16 – Slice 2: `tests/e2e` Playwright project (live-site + admin), user-secrets handoff in the database script, dependabot/docs/setup wiring. 6/6 pass locally with a license.

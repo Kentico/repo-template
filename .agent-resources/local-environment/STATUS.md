@@ -2,14 +2,15 @@
 
 ## Current slice
 
-Slice 2 (Playwright e2e project) in progress: project written, blocked on a license for local verification. Branch `feat/local-environment`, stacked on #24.
+Slice 2 (Playwright e2e) done. Next: `setup-local` skill, then 3 – CI e2e job. Branch `feat/local-environment`, stacked on #24.
 
 ## Components
 
 | Component | State |
 | --- | --- |
 | Database init script | done (`scripts/Initialize-Database.ps1`) |
-| Playwright e2e project | written (`tests/e2e`); admin sign-in setup passes; other tests need a license |
+| Playwright e2e project | done; 6/6 pass locally with a license |
+| `setup-local` skill | not started |
 | CI e2e job | not started |
 | Aspire AppHost | not started |
 | CI restore support | not started (optional) |
@@ -17,8 +18,7 @@ Slice 2 (Playwright e2e project) in progress: project written, blocked on a lice
 ## Open checks
 
 - Without a license the live site returns 500 (`LicenseCheckerMiddleware`) and the admin shows only the license prompt + Configuration, hiding custom applications. Local e2e and the CI e2e job need a license; CI via a repository secret (not available to fork PRs).
-- Local `examples/DancingGoat/appsettings.json` carries the `dbmanager` salt for the local test database – never commit it.
-- Playwright admin sign-in with the `dbmanager`-created admin account in CI.
+- CI: `XPERIENCE_LICENSE_KEY` repository secret + same-named Dependabot secret; e2e steps skip when absent (fork PRs).
 - Aspire package versions and agent tooling (`aspire` CLI / MCP) current state.
 
 ## Pending decisions
