@@ -11,6 +11,14 @@ resources:
     - repository: self
       type: git
 
+parameters:
+  # Projects to pack and publish. Add an Admin UI project here when the repository has one.
+  - name: artifacts
+    type: object
+    default:
+      - artifactName: "Kentico-Xperience-RepoTemplate"
+        projectPath: "src/Kentico.Xperience.RepoTemplate"
+
 variables:
   - name: SIGN_FILE
     value: true
@@ -39,20 +47,26 @@ stages:
               useGlobalJson: true
 
           - task: PowerShell@2
-            displayName: Set Node.js version from package.json
+            displayName: Set Node.js version from Admin client package.json (if present)
             inputs:
               targetType: inline
               script: |
-                $fileContent = Get-Content -Path 'src/Kentico.Xperience.RepoTemplate.Admin/Client/package.json' -Raw
-                $jsonObject = ConvertFrom-Json -InputObject $fileContent
-
-                # Get the value of engines.node
-                $enginesNode = $jsonObject.engines.node
+                $packageJson = Get-ChildItem -Path 'src' -Recurse -Filter package.json -Depth 2 |
+                  Where-Object { $_.FullName -match '[\\/]Client[\\/]package\.json$' } |
+                  Select-Object -First 1
+                if (-not $packageJson) {
+                  Write-Host "No Admin client package.json found - skipping Node.js setup."
+                  Write-Host "##vso[task.setvariable variable=NEEDS_NODE]false"
+                  exit 0
+                }
+                $enginesNode = (Get-Content -Path $packageJson.FullName -Raw | ConvertFrom-Json).engines.node
                 Write-Host "Required Node version $enginesNode"
+                Write-Host "##vso[task.setvariable variable=NEEDS_NODE]true"
                 Write-Host "##vso[task.setvariable variable=PACKAGE_JSON_NODE_VERSION]$enginesNode"
 
           - task: UseNode@1
             displayName: "Install Node.js from package.json version"
+            condition: and(succeeded(), eq(variables['NEEDS_NODE'], 'true'))
             inputs:
               version: $(PACKAGE_JSON_NODE_VERSION)
 
@@ -64,13 +78,15 @@ stages:
               arguments: restore
               workingDirectory: $(System.DefaultWorkingDirectory)
 
+          # 'custom' keeps the repository nuget.config (and its package source mapping) in effect.
+          # The built-in 'restore' command with feedsToUse: select generates its own NuGet.config instead.
           - task: DotNetCoreCLI@2
             displayName: Restore dependencies
             inputs:
-              command: restore
-              projects: ${{ variables.slnPath }}
-              feedsToUse: select
-              restoreArguments: --locked-mode
+              command: custom
+              custom: restore
+              arguments: ${{ variables.slnPath }} --locked-mode
+
 
           - task: GetAzureAuthToken@5
             name: KeyVaultToken
@@ -94,13 +110,7 @@ stages:
           - template: steps.yml
             parameters:
               Configuration: $(Configuration)
-              artifacts:
-                - Core:
-                  artifactName: "Kentico-Xperience-RepoTemplate"
-                  projectPath: "src/Kentico.Xperience.RepoTemplate"
-                - Admin:
-                  artifactName: "Kentico-Xperience-RepoTemplate-Admin"
-                  projectPath: "src/Kentico.Xperience.RepoTemplate.Admin"
+              artifacts: ${{ parameters.artifacts }}
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       - stage: PublishNuGetPackages
