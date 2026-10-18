@@ -28,6 +28,7 @@
   .\.template\setup.ps1 -ProjectName Kentico.Xperience.CoolProject -RepositoryName xperience-by-kentico-cool-project -OwnerTeam @Kentico/platform-engineering
   .\.template\setup.ps1 -ProjectName Kentico.Xperience.CoolProject -HookOptions @{ AdminUiExtension = $true }
 #>
+#Requires -Version 7.4
 param (
     [Parameter(Mandatory)][string]$ProjectName,
     [string]$RepositoryName,
@@ -36,6 +37,7 @@ param (
 )
 
 $ErrorActionPreference = 'Stop'
+$PSNativeCommandUseErrorActionPreference = $true   # a failing native command (dotnet, git, ...) in a hook stops the setup
 Set-Location "$PSScriptRoot\.."
 
 $shortName = ($ProjectName -split '\.')[-1]
@@ -77,7 +79,7 @@ foreach ($file in $textFiles) {
     $text = [IO.File]::ReadAllText($file.FullName)
     $new = $text
     foreach ($pair in $pairs.GetEnumerator()) { $new = $new.Replace($pair.Key, $pair.Value) }
-    if ($new -ne $text) {
+    if ($new -cne $text) {
         [IO.File]::WriteAllText($file.FullName, $new)
         Write-Host "Replaced in $($file.FullName)"
     }
@@ -87,7 +89,7 @@ foreach ($file in $textFiles) {
 foreach ($file in Get-ChildItem -Recurse -File | Where-Object { $_.FullName -notmatch '[\\/](\.git|\.template)[\\/]' }) {
     $newName = $file.Name
     foreach ($pair in $pairs.GetEnumerator()) { $newName = $newName.Replace($pair.Key, $pair.Value) }
-    if ($newName -ne $file.Name) {
+    if ($newName -cne $file.Name) {
         Rename-Item -LiteralPath $file.FullName -NewName $newName
         Write-Host "Renamed $($file.Name) -> $newName"
     }
@@ -97,7 +99,6 @@ foreach ($file in Get-ChildItem -Recurse -File | Where-Object { $_.FullName -not
 foreach ($hook in Get-ChildItem .template/hooks/*.ps1 -ErrorAction Ignore | Sort-Object Name) {
     Write-Host "=== Hook $($hook.Name)"
     & $hook.FullName -Values $values
-    if (-not $?) { throw "Hook $($hook.Name) failed." }
 }
 
 # 5. Clean up
