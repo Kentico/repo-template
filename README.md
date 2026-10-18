@@ -39,7 +39,6 @@
 
 ---These are all the dependencies required to use (not build) the library---
 
-- [ASP.NET Core 8.0](https://dotnet.microsoft.com/en-us/download)
 - [Xperience by Kentico](https://docs.kentico.com)
 
 ### Other requirements
@@ -51,10 +50,6 @@
 ---This details the steps required to add the library to a solution. This could include multiple packages (NuGet and/or npm)---
 
 Add the package to your application using the .NET CLI
-
-```powershell
-dotnet add package <repo-template>
-```
 
 ## Quick Start
 

@@ -1,3 +1,0 @@
-# Sample projects follow upstream Kentico style; keep dotnet format from rewriting them.
-[*.cs]
-generated_code = true

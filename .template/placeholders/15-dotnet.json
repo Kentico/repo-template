@@ -1,8 +1,0 @@
-{
-  "replace": {
-    "Kentico.Xperience.RepoTemplate": "{ProjectName}",
-    "Kentico-Xperience-RepoTemplate": "{ProjectNameDashed}",
-    "dotnet add package <repo-template>": "dotnet add package {ProjectName}",
-    "App_Data/RepoTemplate/": "App_Data/{ProjectShortName}/"
-  }
-}
