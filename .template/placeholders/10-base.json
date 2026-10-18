@@ -1,0 +1,7 @@
+{
+  "replace": {
+    "REPOSITORY_NAME": "{RepositoryName}",
+    "Kentico/repo-template/actions": "Kentico/{RepositoryName}/actions",
+    "@Kentico/platform-engineering": "{OwnerTeam}"
+  }
+}
