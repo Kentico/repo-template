@@ -81,8 +81,9 @@ if (builder.Environment.IsDevelopment())
     builder.Services.Configure<UrlResolveOptions>(options => options.UseSSL = false);
 }
 
-builder.Services.AddXperienceSystemSmtp();
-builder.Services.ConfigureSystemSmtpOptions(builder.Configuration.GetSection("SystemSmtpOptions"));
+// Fallback SMTP for system emails, notifications, and every email channel without its own configuration
+builder.Services.AddXperienceSmtp();
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("SmtpOptions"));
 builder.Services.Configure<SystemEmailOptions>(builder.Configuration.GetSection("SystemEmailOptions"));
 
 builder.AddDancingGoatManagementApi();

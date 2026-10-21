@@ -38,6 +38,7 @@ One-command local startup for DancingGoat and the template's libraries, and Play
 - 2026-10-16: `Initialize-Database.ps1` moves dbmanager's connection string + salt into DancingGoat user secrets (not in CI); a `setup-local` skill guides new clones.
 - 2026-10-16: CI secret hardening: Playwright report uploaded on failure only (7 days; public artifacts, admin traces); `.npmrc` `ignore-scripts=true` in admin Client, `tests/e2e`, DancingGoat (chromedriver for `npm run a11y` via one-time `npm rebuild`; npm `allowScripts` approvals are version-pinned and lose to `ignore-scripts`); Mailpit image pinned (dependabot doesn't update service images).
 - 2026-10-16: Aspire defaults to the existing server (DancingGoat user secrets); the SQL container is opt-in (`Sql:UseExistingServer=false`). dbmanager keeps owning the salt; the script reuses the one in DancingGoat user secrets. CI stays on service containers. Aspire MCP server committed; Aspire skills not (`aspire agent init` adds global telemetry hooks).
+- 2026-10-21: DancingGoat uses the fallback `AddXperienceSmtp()` (`SmtpOptions` section) so system emails, notifications, and email channel emails (`DancingGoatEmails`) all go to the configured SMTP server (Mailpit locally/CI); system-only SMTP left channel emails without a client.
 
 ## Slice log
 

@@ -14,8 +14,8 @@ var repositoryRoot = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..
 var mailpit = builder.AddMailPit("mailpit");
 
 var dancingGoat = builder.AddProject<Projects.DancingGoat>("dancinggoat")
-    .WithEnvironment("SystemSmtpOptions__Server__Host", mailpit.GetEndpoint("smtp").Property(EndpointProperty.Host))
-    .WithEnvironment("SystemSmtpOptions__Server__Port", mailpit.GetEndpoint("smtp").Property(EndpointProperty.Port))
+    .WithEnvironment("SmtpOptions__Server__Host", mailpit.GetEndpoint("smtp").Property(EndpointProperty.Host))
+    .WithEnvironment("SmtpOptions__Server__Port", mailpit.GetEndpoint("smtp").Property(EndpointProperty.Port))
     .WaitFor(mailpit)
     .WithUrls(context =>
     {
