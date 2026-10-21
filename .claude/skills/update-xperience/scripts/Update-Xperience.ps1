@@ -63,12 +63,15 @@ function Invoke-Native([scriptblock]$command, [int[]]$AllowedExitCodes = @(0)) {
 }
 
 function New-Pristine($templateVersion, $name) {
-    Invoke-Native { dotnet new install "Kentico.Xperience.Templates@$templateVersion" --force }
+    # Private template hive per version: leaves the user's installed templates alone and avoids
+    # "Sequence contains more than one matching element" when the global hive has duplicate entries
+    $hive = Join-Path $work "$name-hive"
+    Invoke-Native { dotnet new install "Kentico.Xperience.Templates@$templateVersion" --debug:custom-hive $hive }
     $dg = Join-Path $work "$name-dg"
     # 104: the skipped "dotnet tool restore" post action; the project is still created
-    Invoke-Native { dotnet new kentico-xperience-sample-mvc -n DancingGoat -o $dg --no-restore --allow-scripts No --no-update-check } -AllowedExitCodes 0, 104
+    Invoke-Native { dotnet new kentico-xperience-sample-mvc -n DancingGoat -o $dg --no-restore --allow-scripts No --no-update-check --debug:custom-hive $hive } -AllowedExitCodes 0, 104
     $admin = Join-Path $work "$name-admin"
-    Invoke-Native { dotnet new kentico-xperience-admin-sample -n Admin -o $admin --no-restore --no-update-check }
+    Invoke-Native { dotnet new kentico-xperience-admin-sample -n Admin -o $admin --no-restore --no-update-check --debug:custom-hive $hive }
     return @{ DancingGoat = $dg; Admin = $admin }
 }
 
@@ -141,7 +144,10 @@ try {
     Sync-Tree $target.DancingGoat
     git commit -q -m "pristine $Version" --allow-empty
 
-    git switch -q ours
+    # Fresh checkout: files left on disk by Sync-Tree keep the template's CRLF endings and would
+    # show as modified in the repository
+    Get-ChildItem $merge -Force | Where-Object Name -NE '.git' | Remove-Item -Recurse -Force
+    git checkout -q -f ours
     git merge -q --no-edit theirs 2>&1 | Out-Null
     $conflicts = @(git diff --name-only --diff-filter=U)
     Remove-Item (Join-Path $merge '.gitattributes') -Force -ErrorAction SilentlyContinue
