@@ -41,7 +41,11 @@ If the `aspire` CLI is installed (`aspire --version`), tell the user `aspire run
 
 Run `dotnet run --project examples/DancingGoat --no-build -- --kxp-db-status --format json`. Done when `state` is `Ready`. For any other state, follow its `message`.
 
-## 7. Report
+## 7. Set channel domains
+
+The new database's channel domains don't match the local site, so emails send with broken links. Start the site in the background (`aspire run`, or `dotnet run --project examples/DancingGoat`) and, with the `xperience-management-mcp` server, set every website channel's domain and every email channel's service domain to `localhost:<port>` from `applicationUrl` in `examples/DancingGoat/Properties/launchSettings.json` (no scheme). Done when the MCP returns that value for each of those channels.
+
+## 8. Report
 
 Tell the user:
 

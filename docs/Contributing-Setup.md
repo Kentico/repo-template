@@ -55,7 +55,7 @@ The dashboard links the live site and the administration. By default DancingGoat
 dotnet user-secrets set "Sql:UseExistingServer" false --project examples/AppHost
 ```
 
-Set `XPERIENCE_LICENSE_FILE` before `aspire run` to install the license into a new container database.
+Set `XPERIENCE_LICENSE_FILE` before `aspire run` to install the license into a new container database. After its first run, set the channel domains as in step 7 of the `setup-local` skill (`.claude/skills/setup-local/SKILL.md`) so emails link to the local site.
 
 The root `.mcp.json` registers the Aspire MCP server (`aspire agent mcp`), so AI agents can list resources, read logs, and restart them. `aspire agent init` can also install Aspire's agent skills; note that it adds Aspire telemetry hooks to your global agent settings unless `ASPIRE_CLI_TELEMETRY_OPTOUT=true` is set.
 
