@@ -12,7 +12,11 @@
 - `Kentico.Xperience.*` NuGet and `@kentico/*` npm versions change only through the `update-xperience` skill, which also regenerates `examples/DancingGoat` from the matching project template.
 - `examples/DancingGoat` is template-generated. When you change it beyond demonstrating this repository's library (project references, settings, startup), record the change in `.claude/skills/update-xperience/references/dancinggoat-overlay.md` so updates keep it.
 - `examples/DancingGoat/AGENTS.md` has instructions for the sample app.
-- Run the sample with `aspire run` (`examples/AppHost`); the `aspire` MCP server lists resources, shows logs, and restarts them. Update Aspire with `aspire update` (or the grouped dependabot PR) and keep the `Aspire.AppHost.Sdk` version in `AppHost.csproj` on the same version.
+- Run the sample with `aspire run` (`examples/AppHost`); the `aspire` MCP server lists resources, shows logs, and restarts them. Pick the run mode per invocation:
+  - Plain `aspire run` when working alone: DancingGoat goes stale after edits; `aspire resource dancinggoat rebuild` refreshes it.
+  - Watch when the user is testing alongside: `$env:features__defaultWatchEnabled = 'true'; aspire run` runs `dotnet watch --non-interactive`, so edits hot-reload and rude edits restart DancingGoat. The watcher owns builds and locks output; read build errors from the resource console logs.
+  - Aspire settings files override the env var, so keep `features.defaultWatchEnabled` out of `aspire.config.json` and `~/.aspire`.
+- Update Aspire with `aspire update` (or the grouped dependabot PR) and keep the `Aspire.AppHost.Sdk` version in `AppHost.csproj` on the same version.
 
 ## Planning docs (`.agent-resources/<feature>/`)
 
