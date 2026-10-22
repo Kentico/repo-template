@@ -6,17 +6,17 @@ using Microsoft.Extensions.Configuration;
 //   true  (default) DancingGoat uses its own connection string and salt from user secrets
 //                   (scripts/Initialize-Database.ps1 or the setup-local skill)
 //   false           a persistent SQL Server container; the database is created on first run
+//
+// Mailpit ("Mail:UseExistingServer", same sources):
+//   true  (default) DancingGoat sends to the machine-wide Mailpit from its appsettings (localhost:1025),
+//                   shared by every project; the dashboard links its inbox
+//   false           a Mailpit container for this run only
 
 var builder = DistributedApplication.CreateBuilder(args);
 
 var repositoryRoot = Path.GetFullPath(Path.Combine(builder.AppHostDirectory, "..", ".."));
 
-var mailpit = builder.AddMailPit("mailpit");
-
 var dancingGoat = builder.AddProject<Projects.DancingGoat>("dancinggoat")
-    .WithEnvironment("SmtpOptions__Server__Host", mailpit.GetEndpoint("smtp").Property(EndpointProperty.Host))
-    .WithEnvironment("SmtpOptions__Server__Port", mailpit.GetEndpoint("smtp").Property(EndpointProperty.Port))
-    .WaitFor(mailpit)
     .WithUrls(context =>
     {
         if (context.Urls.FirstOrDefault(url => url.Endpoint?.EndpointName == "http") is { } site)
@@ -25,6 +25,22 @@ var dancingGoat = builder.AddProject<Projects.DancingGoat>("dancinggoat")
             context.Urls.Add(new() { Url = $"{site.Url.TrimEnd('/')}/admin", DisplayText = "Administration", Endpoint = site.Endpoint });
         }
     });
+
+if (builder.Configuration.GetValue("Mail:UseExistingServer", true))
+{
+    // Not started or stopped by Aspire: docker run -d --name mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
+    builder.AddExternalService("mailpit", "http://localhost:8025")
+        .WithHttpHealthCheck("/");
+}
+else
+{
+    var mailpit = builder.AddMailPit("mailpit");
+
+    dancingGoat
+        .WithEnvironment("SmtpOptions__Server__Host", mailpit.GetEndpoint("smtp").Property(EndpointProperty.Host))
+        .WithEnvironment("SmtpOptions__Server__Port", mailpit.GetEndpoint("smtp").Property(EndpointProperty.Port))
+        .WaitFor(mailpit);
+}
 
 if (!builder.Configuration.GetValue("Sql:UseExistingServer", true))
 {

@@ -39,6 +39,8 @@ One-command local startup for DancingGoat and the template's libraries, and Play
 - 2026-10-16: CI secret hardening: Playwright report uploaded on failure only (7 days; public artifacts, admin traces); `.npmrc` `ignore-scripts=true` in admin Client, `tests/e2e`, DancingGoat (chromedriver for `npm run a11y` via one-time `npm rebuild`; npm `allowScripts` approvals are version-pinned and lose to `ignore-scripts`); Mailpit image pinned (dependabot doesn't update service images).
 - 2026-10-16: Aspire defaults to the existing server (DancingGoat user secrets); the SQL container is opt-in (`Sql:UseExistingServer=false`). dbmanager keeps owning the salt; the script reuses the one in DancingGoat user secrets. CI stays on service containers. Aspire MCP server committed; Aspire skills not (`aspire agent init` adds global telemetry hooks).
 - 2026-10-21: DancingGoat uses the fallback `AddXperienceSmtp()` (`SmtpOptions` section) so system emails, notifications, and email channel emails (`DancingGoatEmails`) all go to the configured SMTP server (Mailpit locally/CI); system-only SMTP left channel emails without a client.
+- 2026-10-22: Aspire defaults to the machine-wide Mailpit (`localhost:1025`/`8025`, shared by all projects; `AddExternalService` with a health check), like SQL. A per-run Mailpit container is opt-in (`Mail:UseExistingServer=false`). A shared Aspire-persistent container was rejected: several AppHosts would contend for it.
+- 2026-10-22: Run modes chosen per invocation: plain `aspire run` by default, watch via `features__defaultWatchEnabled=true` (settings files override the env var, so it stays out of them). New databases need channel domains set to the local URL (`setup-local` step 7).
 
 ## Slice log
 

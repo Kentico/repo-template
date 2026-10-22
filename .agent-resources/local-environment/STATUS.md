@@ -12,7 +12,7 @@ Slice 4 (Aspire AppHost) done locally. Next: 5 – optional CI restore support. 
 | Playwright e2e project | done; 6/6 pass locally with a license |
 | `setup-local` skill | done (not agent-tested on a fresh clone) |
 | CI e2e job | done; 6/6 on GitHub (PR #25); repository + Dependabot secrets set |
-| Aspire AppHost | done; both SQL modes + e2e verified locally |
+| Aspire AppHost | done; both SQL modes + e2e verified locally; both Mailpit modes verified |
 | CI restore support | not started (optional) |
 
 ## Open checks

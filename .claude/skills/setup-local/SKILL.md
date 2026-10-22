@@ -13,8 +13,10 @@ Each step ends on its completion criterion. Run from the repository root.
   - Docker: if nothing listens on port 1433, start one matching the default connection string in `examples/DancingGoat/appsettings.json`:
     `docker run -d --name xperience-sql -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=Pass@12345 -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest`
   - Local install: get its server name (e.g. `localhost\SQLEXPRESS`) and whether it uses Windows authentication.
+- Mailpit, shared by every project on the machine: if nothing listens on port 1025, start one:
+  `docker run -d --name mailpit --restart unless-stopped -p 1025:1025 -p 8025:8025 axllent/mailpit`
 
-Done when both versions match and the SQL Server accepts connections.
+Done when both versions match, the SQL Server accepts connections, and <http://localhost:8025> responds.
 
 ## 2. Get the license
 
@@ -35,7 +37,7 @@ Done when all four exit 0.
 
 ## 5. Offer Aspire
 
-If the `aspire` CLI is installed (`aspire --version`), tell the user `aspire run` starts DancingGoat, the admin client dev server, and Mailpit together, using the database from step 3. Mention that `aspire agent init` installs Aspire's agent skills but also adds Aspire telemetry hooks to their global agent settings unless `ASPIRE_CLI_TELEMETRY_OPTOUT=true` is set; run it only if the user asks. Done when the user has been told.
+If the `aspire` CLI is installed (`aspire --version`), tell the user `aspire run` starts DancingGoat and the admin client dev server together, using the database from step 3 and the Mailpit from step 1. Mention that `aspire agent init` installs Aspire's agent skills but also adds Aspire telemetry hooks to their global agent settings unless `ASPIRE_CLI_TELEMETRY_OPTOUT=true` is set; run it only if the user asks. Done when the user has been told.
 
 ## 6. Verify
 

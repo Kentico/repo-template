@@ -25,6 +25,14 @@ SQL Server 2019 or newer compatible database
 
 - [SQL Server Linux](https://learn.microsoft.com/en-us/sql/linux/install-upgrade/setup?view=sql-server-ver15)
 
+### Email
+
+[Mailpit](https://mailpit.axllent.org) catches DancingGoat's emails on `localhost:1025` (SMTP), with the inbox at <http://localhost:8025>. One container serves every project on the machine:
+
+```powershell
+docker run -d --name mailpit --restart unless-stopped -p 1025:1025 -p 8025:8025 axllent/mailpit
+```
+
 ## Sample Project
 
 ### Database Setup
@@ -43,7 +51,7 @@ Running the sample project requires an Xperience by Kentico database. AI agents 
 
 ### Run with Aspire
 
-[Aspire](https://aspire.dev) starts everything together: DancingGoat, the admin client dev server (Proxy mode), and Mailpit for emails. Install the [Aspire CLI](https://aspire.dev/get-started/install-cli/), then from the repository root:
+[Aspire](https://aspire.dev) starts everything together: DancingGoat and the admin client dev server (Proxy mode), with a link to the Mailpit inbox. Install the [Aspire CLI](https://aspire.dev/get-started/install-cli/), then from the repository root:
 
 ```powershell
 aspire run
@@ -56,6 +64,12 @@ dotnet user-secrets set "Sql:UseExistingServer" false --project examples/AppHost
 ```
 
 Set `XPERIENCE_LICENSE_FILE` before `aspire run` to install the license into a new container database. After its first run, set the channel domains as in step 7 of the `setup-local` skill (`.claude/skills/setup-local/SKILL.md`) so emails link to the local site.
+
+By default DancingGoat sends emails to the machine-wide Mailpit from [Email](#email), and the dashboard shows it as unhealthy when it isn't running. To start a Mailpit container for the run instead, set `Mail:UseExistingServer` to `false`:
+
+```powershell
+dotnet user-secrets set "Mail:UseExistingServer" false --project examples/AppHost
+```
 
 The root `.mcp.json` registers the Aspire MCP server (`aspire agent mcp`), so AI agents can list resources, read logs, and restart them. `aspire agent init` can also install Aspire's agent skills; note that it adds Aspire telemetry hooks to your global agent settings unless `ASPIRE_CLI_TELEMETRY_OPTOUT=true` is set.
 
