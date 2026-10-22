@@ -1,0 +1,76 @@
+﻿@using DancingGoat.Commerce
+@using DancingGoat.Models
+@using DancingGoat.Helpers
+
+@model CustomerAddressViewModel
+
+
+@{
+    var isBilling = !(Model is ShippingAddressViewModel);
+
+    <h2><span class="step">@(ViewData["Step"] ?? (isBilling ? "02" : "03"))</span>@(isBilling ? HtmlLocalizer["Billing address"] : HtmlLocalizer["Shipping address"])</h2>
+
+    var addressType = isBilling ? "Billing" : "Shipping";
+    var stateGroupName = "statesGroup" + addressType;
+    var countryDropdownName = "countryDropdown" + addressType;
+    var stateDropdownName = "stateDropdown" + addressType;
+    var addressFieldsName = "fields" + addressType;
+    var fieldStyle = isBilling ? "" : "display: none;";
+
+    if (!isBilling)
+    {
+        var isSameAsBilling = (Model as ShippingAddressViewModel)?.IsSameAsBilling ?? false;
+        if (!isSameAsBilling)
+        {
+            fieldStyle = "";
+        }
+
+        <div class="form-group">
+            <label class="checkbox-row" for="toggleShipping">
+                @Html.CheckBoxFor(m => isSameAsBilling, new { @id = "toggleShipping", data_shipping_toggle = addressFieldsName })
+                <span>@HtmlLocalizer["Same as billing"]</span>
+            </label>
+        </div>
+    }
+}
+
+@{
+<div id="@addressFieldsName" style="@fieldStyle"
+     data-address-fields
+     data-states-url="@Url.Action(nameof(DancingGoatCheckoutController.GetStates), "DancingGoatCheckout")"
+     data-state-group="@stateGroupName"
+     data-state-dropdown="@stateDropdownName"
+     data-country-dropdown="@countryDropdownName"
+     data-storage-prefix="@addressType">
+    @Html.ValidatedEditorFor(m => m.Line1)
+    @Html.ValidatedEditorFor(m => m.Line2)
+    <div class="form-2col">
+        @Html.ValidatedEditorFor(m => m.City)
+        @Html.ValidatedEditorFor(m => m.PostalCode)
+    </div>
+
+    <div class="form-group">
+        <div class="form-group-label">
+            @Html.LabelFor(m => m.CountryId, new { @for = countryDropdownName })
+        </div>
+        <div class="form-group-input select-wrap">
+            @Html.DropDownListFor(m => m.CountryId, Model.Countries, HtmlLocalizer["Select a country"].Value, new { @class = "select", @id = @countryDropdownName, data_storage = $"{addressType}Address_{nameof(CustomerAddressViewModel.Country)}" })
+        </div>
+        <div class="error-label">
+            @Html.ValidationMessageFor(m => m.CountryId)
+        </div>
+    </div>
+
+    <div class="form-group" id="@stateGroupName">
+        <div class="form-group-label">
+            @Html.LabelFor(m => m.StateId, new { @for = stateDropdownName })
+        </div>
+        <div class="form-group-input select-wrap">
+            @Html.DropDownListFor(m => m.StateId, Model.States, HtmlLocalizer["Select a state"].Value, new { @class = "select", @id = @stateDropdownName, data_storage = $"{addressType}Address_{nameof(CustomerAddressViewModel.State)}" })
+        </div>
+        <div class="error-label">
+            @Html.ValidationMessageFor(m => m.StateId)
+        </div>
+    </div>
+</div>
+}

@@ -7,6 +7,12 @@
       "commands": [
         "azuresigntool"
       ]
+    },
+    "kentico.xperience.dbmanager": {
+      "version": "31.9.3",
+      "commands": [
+        "kentico-xperience-dbmanager"
+      ]
     }
   }
 }

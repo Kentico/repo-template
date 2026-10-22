@@ -1,0 +1,10 @@
+﻿@model DancingGoat.Models.ContactViewModel
+
+@if(Model != null) {
+    <address>
+        @Model.Phone<br />
+        @Model.Name<br />
+        @Model.Street @Model.City,<br />
+        @Model.ZipCode, @Model.Country
+    </address>
+}

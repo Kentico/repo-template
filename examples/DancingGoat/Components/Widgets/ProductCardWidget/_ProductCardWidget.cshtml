@@ -1,0 +1,44 @@
+﻿@model DancingGoat.Widgets.ProductCardListViewModel
+
+@inject Kentico.Builder.Web.Mvc.IAdminBuildersLocalizationService localizationService
+
+@if (Model.Products.Count() == 0)
+{
+    @if (Context.Kentico().PageBuilder().EditMode)
+    {
+        <h3 class="grid-empty">
+            @localizationService.LocalizeString("{$dancinggoat.productcardwidget.pleaseselectaproduct$}")
+        </h3>
+    }
+}
+else
+{
+    <section class="block">
+        <div class="wrap">
+            <div class="product-grid cols-3">
+                @foreach (var product in Model.Products)
+                {
+                    <article class="product-card reveal">
+                        @if (!string.IsNullOrEmpty(product.Url))
+                        {
+                            <a class="pc-overlay" href="@product.Url" aria-label="@HtmlLocalizer["View product {0}", product.Heading]"></a>
+                        }
+                        @if (!string.IsNullOrEmpty(product.ImagePath))
+                        {
+                            <div class="media">
+                                <img src="@Url.Content(product.ImagePath)" alt="@product.Heading" title="@product.Heading" loading="lazy" />
+                            </div>
+                        }
+                        <h3>@product.Heading</h3>
+                        @if (!string.IsNullOrEmpty(product.Text))
+                        {
+                            <div class="p-note">
+                                @Html.Raw(product.Text)
+                            </div>
+                        }
+                    </article>
+                }
+            </div>
+        </div>
+    </section>
+}

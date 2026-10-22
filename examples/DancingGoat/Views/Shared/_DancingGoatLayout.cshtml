@@ -1,0 +1,121 @@
+@using CMS.Websites.Routing
+@using CMS.Websites
+@using DancingGoat.Services
+@using Kentico.Activities.Web.Mvc
+@using Kentico.Content.Web.Mvc
+@using Kentico.Content.Web.Mvc.PageBuilder
+@using DancingGoat.Controllers
+@using DancingGoat.Models
+@using DancingGoat.ViewComponents
+
+@inject IWebsiteChannelContext websiteChannelContext;
+@inject WebPageUrlProvider webPageUrlProvider
+
+@model object;
+
+@{
+    const string ENGLISH = "English";
+    const string ESPANOL = "Español";
+
+    var homePageUrl = await webPageUrlProvider.HomePageUrl(cancellationToken: Context.RequestAborted);
+
+    var shoppingCartPageUrl = await webPageUrlProvider.ShoppingCartPageUrl();
+
+    var languageCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+    var currentLanguage = languageCode.ToUpperInvariant();
+
+    var cartToastMessage = TempData[DancingGoatConstants.CART_TOAST_TEMPDATA_KEY] as string;
+}
+
+<!DOCTYPE html>
+
+<html lang="@languageCode" data-page-builder="@(Context.Kentico().PageBuilder().GetMode() != PageBuilderMode.Off ? "true" : "false")">
+<head id="head">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <vc:seo-metadata page-model="Model" page-title="@((string)ViewBag.Title)" />
+    <link rel="icon" href="~/content/images/favicon.svg" type="image/svg+xml" />
+    <link href="~/Content/Styles/Site.css" rel="stylesheet" type="text/css" />
+    @RenderSection("styles", required: false)
+    @Html.Kentico().ActivityLoggingScriptV2()
+    <page-builder-styles />
+</head>
+<body class="@ViewData["PageClass"]">
+    <a href="#main" class="skip-link">@HtmlLocalizer["Skip to content"]</a>
+    <vc:tracking-consent />
+    <div class="nav-shell" data-menu-open="false">
+        <nav class="nav-pill" aria-label="@HtmlLocalizer["Main"]">
+            <a href="@homePageUrl" class="brand">
+                <img class="brand-logo" alt="Dancing Goat" src="~/Content/Images/logo.svg" />
+            </a>
+            <vc:navigation-menu />
+            <div class="nav-utils">
+                <a class="util" title="@HtmlLocalizer["Shopping cart"]" href="@shoppingCartPageUrl">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"></circle><circle cx="17" cy="20" r="1.4"></circle><path d="M3 4h2l2.4 11h10.2l2-8H6"></path></svg>
+                    <span class="visually-hidden">@HtmlLocalizer["Shopping cart"]</span>
+                    <vc:cart-badge />
+                </a>
+                <div class="user-select" data-open="false">
+                    <button type="button" class="util" title="@HtmlLocalizer["User"]" aria-label="@HtmlLocalizer["User"]" aria-haspopup="true" aria-expanded="false" aria-controls="user-menu">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <img src="~/Content/Images/default-avatar.png" class="user-avatar" alt="" />
+                        }
+                        else
+                        {
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"></circle><path d="M4.5 20c1.2-3.4 4-5 7.5-5s6.3 1.6 7.5 5"></path></svg>
+                        }
+                    </button>
+                    <div class="user-menu" id="user-menu">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form method="post" asp-controller="Account" asp-action="Logout">
+                                <input type="submit" value="@HtmlLocalizer["Sign out"]" />
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Register">@HtmlLocalizer["Register"]</a>
+                            <a asp-controller="Account" asp-action="Login">@HtmlLocalizer["Sign in"]</a>
+                        }
+                    </div>
+                </div>
+                @if (Context.Response.StatusCode == (int)System.Net.HttpStatusCode.OK)
+                {
+                    <div class="lang-select" data-open="false">
+                        <button type="button" class="lang-btn" aria-haspopup="true" aria-expanded="false" aria-controls="lang-menu" aria-label="@HtmlLocalizer["Select language"]">
+                            <span>@currentLanguage</span>
+                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"></path></svg>
+                        </button>
+                        <div class="lang-menu" id="lang-menu">
+                            <language-link link-text="@ENGLISH" language-name="en" />
+                            <language-link link-text="@ESPANOL" language-name="es" />
+                        </div>
+                    </div>
+                }
+                <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="@HtmlLocalizer["Menu"]">
+                    <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+                    @HtmlLocalizer["Menu"]
+                </button>
+            </div>
+        </nav>
+    </div>
+    <main id="main">
+        @RenderBody()
+    </main>
+    <partial name="_Footer" />
+    @if (!string.IsNullOrEmpty(cartToastMessage))
+    {
+        <div class="dg-toast" data-autoshow="true" role="status">
+            <span>@cartToastMessage</span>
+            <a href="@shoppingCartPageUrl">@HtmlLocalizer["View cart"]</a>
+            <button type="button" class="toast-close" data-toast-close aria-label="@HtmlLocalizer["Close"]">&times;</button>
+        </div>
+    }
+    <script src="~/Scripts/siteHeader.js" defer></script>
+    <script src="~/Scripts/reveal.js" defer></script>
+    <script src="~/Scripts/toast.js" defer></script>
+    <page-builder-scripts />
+    @RenderSection("scripts", required: false)
+</body>
+</html>

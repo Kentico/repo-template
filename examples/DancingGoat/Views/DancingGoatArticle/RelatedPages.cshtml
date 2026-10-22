@@ -1,0 +1,29 @@
+﻿@using DancingGoat.Models
+
+@model IEnumerable<RelatedPageViewModel>
+@if (Model.Any())
+{
+    <aside class="article-side">
+        @foreach (var relatedPage in Model)
+        {
+            var tile = ArticleTileViewModel.GetViewModel(relatedPage);
+            <article class="side-card">
+                <a class="ac-overlay" href="@tile.Url" aria-label="@tile.Title"></a>
+                <div class="media">
+                    @if (!string.IsNullOrEmpty(tile.TeaserUrl))
+                    {
+                        <img src="@Url.Content(tile.TeaserUrl)" alt="" loading="lazy" />
+                    }
+                </div>
+                <div class="side-body">
+                    @if (tile.PublicationDate.HasValue)
+                    {
+                        <span class="article-date">@tile.PublicationDate.Value.ToString("M")</span>
+                    }
+                    <h2>@tile.Title</h2>
+                    <p>@tile.Summary</p>
+                </div>
+            </article>
+        }
+    </aside>
+}
