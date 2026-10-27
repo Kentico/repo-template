@@ -10,9 +10,10 @@
      the tokens {ProjectName}, {ProjectNameDashed}, {ProjectShortName}, {ProjectShortNameLower},
      {RepositoryName}, {OwnerTeam}. Pairs with an empty value are skipped.
   2. Replaces the placeholders as plain strings in the text files of the repository, keeping line endings.
-  3. Renames files whose names contain a placeholder.
+  3. Renames files and folders whose names contain a placeholder, deepest first.
   4. Runs hooks/*.ps1 (name order) with the resolved values; -HookOptions is handed to them as $Values.Options.
-  5. Deletes the .template folder.
+  5. Fails if a placeholder is still found in a text file or path; .template is kept so the setup can be rerun.
+  6. Deletes the .template folder.
 
 .PARAMETER ProjectName
   Required. Name of the main project and NuGet package, e.g. Kentico.Xperience.CoolProject (dot-separated identifiers).
@@ -71,11 +72,15 @@ Write-Host "  OwnerTeam       $OwnerTeam"
 Write-Host "Placeholders:"
 $pairs.GetEnumerator() | ForEach-Object { Write-Host ("  {0} -> {1}" -f $_.Key, $_.Value) }
 
+$excluded = '[\\/](\.git|\.template|bin|obj|node_modules)[\\/]'
+$textExtensions = '.json', '.yml', '.yaml', '.props', '.targets', '.md', '.slnx', '.csproj', '.cs', '.ts', '.tsx', '.cshtml', '.razor', '.xml', '.config',
+                  '.gitignore', '.editorconfig', '.gitattributes', ''
+function Get-TextFiles {
+    Get-ChildItem -Recurse -File -Force | Where-Object { $_.FullName -notmatch $excluded -and $_.Extension -in $textExtensions }
+}
+
 # 2. Replace in text files, keeping line endings
-$textFiles = Get-ChildItem -Recurse -File -Force |
-    Where-Object { $_.FullName -notmatch '[\\/](\.git|\.template|bin|obj|node_modules)[\\/]' } |
-    Where-Object { $_.Extension -in '.json', '.yml', '.yaml', '.props', '.targets', '.md', '.slnx', '.csproj', '.gitignore', '.editorconfig', '.gitattributes', '' }
-foreach ($file in $textFiles) {
+foreach ($file in Get-TextFiles) {
     $text = [IO.File]::ReadAllText($file.FullName)
     $new = $text
     foreach ($pair in $pairs.GetEnumerator()) { $new = $new.Replace($pair.Key, $pair.Value) }
@@ -85,13 +90,15 @@ foreach ($file in $textFiles) {
     }
 }
 
-# 3. Rename files whose name contains a placeholder
-foreach ($file in Get-ChildItem -Recurse -File | Where-Object { $_.FullName -notmatch '[\\/](\.git|\.template)[\\/]' }) {
-    $newName = $file.Name
+# 3. Rename files and folders whose name contains a placeholder, deepest first
+$paths = Get-ChildItem -Recurse -Force | Where-Object { $_.FullName -notmatch $excluded -and $_.Name -notin '.git', '.template' } |
+    Sort-Object { $_.FullName.Length } -Descending
+foreach ($item in $paths) {
+    $newName = $item.Name
     foreach ($pair in $pairs.GetEnumerator()) { $newName = $newName.Replace($pair.Key, $pair.Value) }
-    if ($newName -cne $file.Name) {
-        Rename-Item -LiteralPath $file.FullName -NewName $newName
-        Write-Host "Renamed $($file.Name) -> $newName"
+    if ($newName -cne $item.Name) {
+        Rename-Item -LiteralPath $item.FullName -NewName $newName
+        Write-Host "Renamed $($item.Name) -> $newName"
     }
 }
 
@@ -103,6 +110,20 @@ foreach ($hook in Get-ChildItem .template/hooks/*.ps1 -ErrorAction Ignore | Sort
     if ($LASTEXITCODE -ne 0) { throw "Hook $($hook.Name) exited with code $LASTEXITCODE." }
 }
 
-# 5. Clean up
+# 5. Verify that no placeholder remains
+$leftovers = foreach ($file in Get-TextFiles) {
+    $relative = [IO.Path]::GetRelativePath((Get-Location), $file.FullName)
+    foreach ($key in $pairs.Keys) {
+        if ($relative.Contains($key)) { "$relative (path)" }
+        if ([IO.File]::ReadAllText($file.FullName).Contains($key)) { "$relative`: $key" }
+    }
+}
+if ($leftovers) {
+    Write-Host "Placeholders remain:" -ForegroundColor Red
+    $leftovers | Sort-Object -Unique | ForEach-Object { Write-Host "  $_" }
+    throw "Setup incomplete; .template is kept so the setup can be rerun after the fix."
+}
+
+# 6. Clean up
 Remove-Item .template -Recurse -Force
 Write-Host "Setup complete."
