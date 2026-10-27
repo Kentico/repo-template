@@ -62,7 +62,7 @@ foreach ($file in Get-ChildItem .template/placeholders/*.json | Sort-Object Name
         foreach ($token in 'ProjectName', 'ProjectNameDashed', 'ProjectShortName', 'ProjectShortNameLower', 'RepositoryName', 'OwnerTeam') {
             $value = $value.Replace("{$token}", [string]$values[$token])
         }
-        if ($value) { $pairs[$pair.Name] = $value }
+        if ($value -and $value -cne $pair.Name) { $pairs[$pair.Name] = $value }   # identity pairs would only trip the leftover check
     }
 }
 Write-Host "Values:"
