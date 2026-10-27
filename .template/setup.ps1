@@ -21,7 +21,7 @@
   GitHub repository name. Default: derived from ProjectName
   (Kentico.Xperience.CoolProject -> xperience-by-kentico-cool-project).
 .PARAMETER OwnerTeam
-  Required. GitHub team that owns the new repository, written into CODEOWNERS, e.g. @Kentico/platform-engineering.
+  Required. GitHub team or user that owns the new repository, written into CODEOWNERS, e.g. @Kentico/platform-engineering.
 .PARAMETER HookOptions
   Hashtable handed to every hook as $Values.Options; see the hooks' own headers for the keys they read.
 
@@ -33,7 +33,7 @@
 param (
     [Parameter(Mandatory)][ValidatePattern('^[A-Za-z]\w*(\.[A-Za-z]\w*)*$')][string]$ProjectName,
     [string]$RepositoryName,
-    [Parameter(Mandatory)][ValidatePattern('^@[\w-]+/[\w-]+$')][string]$OwnerTeam,
+    [Parameter(Mandatory)][ValidatePattern('^@[\w-]+(/[\w-]+)?$')][string]$OwnerTeam,
     [hashtable]$HookOptions = @{}
 )
 
