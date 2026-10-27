@@ -15,24 +15,24 @@
   5. Deletes the .template folder.
 
 .PARAMETER ProjectName
-  Required. Name of the main project and NuGet package, e.g. Kentico.Xperience.CoolProject.
+  Required. Name of the main project and NuGet package, e.g. Kentico.Xperience.CoolProject (dot-separated identifiers).
 .PARAMETER RepositoryName
   GitHub repository name. Default: derived from ProjectName
   (Kentico.Xperience.CoolProject -> xperience-by-kentico-cool-project).
 .PARAMETER OwnerTeam
-  GitHub team for CODEOWNERS, e.g. @Kentico/platform-engineering. Default: CODEOWNERS is left unchanged.
+  Required. GitHub team that owns the new repository, written into CODEOWNERS, e.g. @Kentico/platform-engineering.
 .PARAMETER HookOptions
   Hashtable handed to every hook as $Values.Options; see the hooks' own headers for the keys they read.
 
 .EXAMPLE
   .\.template\setup.ps1 -ProjectName Kentico.Xperience.CoolProject -RepositoryName xperience-by-kentico-cool-project -OwnerTeam @Kentico/platform-engineering
-  .\.template\setup.ps1 -ProjectName Kentico.Xperience.CoolProject -HookOptions @{ AdminUiExtension = $true }
+  .\.template\setup.ps1 -ProjectName Kentico.Xperience.CoolProject -OwnerTeam @Kentico/platform-engineering -HookOptions @{ AdminUiExtension = $true }
 #>
 #Requires -Version 7.4
 param (
-    [Parameter(Mandatory)][string]$ProjectName,
+    [Parameter(Mandatory)][ValidatePattern('^[A-Za-z]\w*(\.[A-Za-z]\w*)*$')][string]$ProjectName,
     [string]$RepositoryName,
-    [string]$OwnerTeam,
+    [Parameter(Mandatory)][ValidatePattern('^@[\w-]+/[\w-]+$')][string]$OwnerTeam,
     [hashtable]$HookOptions = @{}
 )
 
@@ -67,7 +67,7 @@ foreach ($file in Get-ChildItem .template/placeholders/*.json | Sort-Object Name
 Write-Host "Values:"
 Write-Host "  ProjectName     $ProjectName"
 Write-Host "  RepositoryName  $RepositoryName$(if (-not $PSBoundParameters.ContainsKey('RepositoryName')) { '   (derived)' })"
-Write-Host "  OwnerTeam       $(if ($OwnerTeam) { $OwnerTeam } else { '(not set, CODEOWNERS unchanged)' })"
+Write-Host "  OwnerTeam       $OwnerTeam"
 Write-Host "Placeholders:"
 $pairs.GetEnumerator() | ForEach-Object { Write-Host ("  {0} -> {1}" -f $_.Key, $_.Value) }
 
@@ -98,7 +98,9 @@ foreach ($file in Get-ChildItem -Recurse -File | Where-Object { $_.FullName -not
 # 4. Hooks
 foreach ($hook in Get-ChildItem .template/hooks/*.ps1 -ErrorAction Ignore | Sort-Object Name) {
     Write-Host "=== Hook $($hook.Name)"
+    $global:LASTEXITCODE = 0
     & $hook.FullName -Values $values
+    if ($LASTEXITCODE -ne 0) { throw "Hook $($hook.Name) exited with code $LASTEXITCODE." }
 }
 
 # 5. Clean up

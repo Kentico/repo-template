@@ -11,14 +11,6 @@ resources:
     - repository: self
       type: git
 
-parameters:
-  # Projects to pack and publish. Add an Admin UI project here when the repository has one.
-  - name: artifacts
-    type: object
-    default:
-      - artifactName: "Kentico-Xperience-RepoTemplate"
-        projectPath: "src/Kentico.Xperience.RepoTemplate"
-
 variables:
   - name: SIGN_FILE
     value: true
@@ -110,7 +102,10 @@ stages:
           - template: steps.yml
             parameters:
               Configuration: $(Configuration)
-              artifacts: ${{ parameters.artifacts }}
+              # Projects to pack and publish. Add an Admin UI project here when the repository has one.
+              artifacts:
+                - artifactName: "Kentico-Xperience-RepoTemplate"
+                  projectPath: "src/Kentico.Xperience.RepoTemplate"
 
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       - stage: PublishNuGetPackages
