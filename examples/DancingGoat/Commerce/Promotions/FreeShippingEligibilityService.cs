@@ -8,13 +8,8 @@ using CMS.Commerce;
 
 using DancingGoat.Models;
 
-using Kentico.Membership;
-
 using Kentico.Xperience.Admin.DigitalCommerce;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
 namespace DancingGoat.Commerce;
@@ -33,7 +28,7 @@ public sealed class FreeShippingEligibilityService
     private readonly ShippingRepository shippingRepository;
 
     private readonly IPromotionCustomerEligibilityValidator promotionCustomerEligibilityValidator;
-    private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly BuyerIdentifierRetriever buyerIdentifierRetriever;
     private readonly IPriceFormatter priceFormatter;
     private readonly IStringLocalizer<SharedResources> localizer;
 
@@ -43,14 +38,14 @@ public sealed class FreeShippingEligibilityService
     /// </summary>
     public FreeShippingEligibilityService(
         IPromotionCustomerEligibilityValidator promotionCustomerEligibilityValidator,
-        IHttpContextAccessor httpContextAccessor,
+        BuyerIdentifierRetriever buyerIdentifierRetriever,
         IPriceFormatter priceFormatter,
         IStringLocalizer<SharedResources> localizer,
         PromotionRepository promotionRepository,
         ShippingRepository shippingRepository)
     {
         this.promotionCustomerEligibilityValidator = promotionCustomerEligibilityValidator;
-        this.httpContextAccessor = httpContextAccessor;
+        this.buyerIdentifierRetriever = buyerIdentifierRetriever;
         this.priceFormatter = priceFormatter;
         this.localizer = localizer;
         this.promotionRepository = promotionRepository;
@@ -111,7 +106,7 @@ public sealed class FreeShippingEligibilityService
         }
 
         var activatingCouponCodes = await promotionRepository.GetActivatingCouponCodes(promotions.Select(promotion => promotion.PromotionID), cancellationToken);
-        var buyerIdentifier = await GetCurrentBuyerIdentifier();
+        var buyerIdentifier = await buyerIdentifierRetriever.GetCurrentBuyerIdentifier();
         decimal unitPrice = GetUnitPriceAfterAllDiscounts(calculationResultItem);
 
         var advertisedPromotions = new List<ProductFreeShippingPromotionViewModel>();
@@ -202,25 +197,6 @@ public sealed class FreeShippingEligibilityService
         var eligibilityResult = await promotionCustomerEligibilityValidator.Validate(promotion.PromotionCustomerEligibility, buyerIdentifier, cancellationToken);
 
         return !eligibilityResult.IsEligible;
-    }
-
-
-    /// <summary>
-    /// Gets the buyer identifier of the signed in member, or of an anonymous visitor when nobody is signed in.
-    /// </summary>
-    private async Task<BuyerIdentifier> GetCurrentBuyerIdentifier()
-    {
-        var httpContext = httpContextAccessor.HttpContext;
-        if (httpContext == null)
-        {
-            return BuyerIdentifier.FromMemberId(0);
-        }
-
-        var userManager = httpContext.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
-
-        var user = await userManager.GetUserAsync(httpContext.User);
-
-        return BuyerIdentifier.FromMemberId(user?.Id ?? 0);
     }
 
 

@@ -63,7 +63,7 @@
                 <div class="buy-card">
                     @{
                         var routeData = new Dictionary<string, string> { { "languageName", languageName } };
-                        <form method="post" asp-controller="DancingGoatShoppingCart" asp-action="Add" asp-all-route-data="routeData">
+                        <form method="post" asp-controller="DancingGoatShoppingCart" asp-action="Add" asp-all-route-data="routeData" data-cart-add-form>
                             <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
                             @if (Model.Variants?.Count > 0)
                             {
@@ -118,6 +118,14 @@
                     <div class="buy-card free-shipping-card">
                         <div><span class="chip chip-shipping">@HtmlLocalizer["Free shipping"]</span></div>
                         <p class="fs-message">@freeShippingPromotion.Message</p>
+                    </div>
+                }
+
+                @foreach (var cartItemDiscount in Model.CartItemDiscounts)
+                {
+                    <div class="buy-card cart-discount-card">
+                        <div><span class="chip chip-offer">@HtmlLocalizer["Special offer"]</span></div>
+                        <p class="cd-message">@cartItemDiscount.Message</p>
                     </div>
                 }
             </aside>

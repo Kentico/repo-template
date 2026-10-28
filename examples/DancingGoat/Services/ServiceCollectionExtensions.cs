@@ -36,6 +36,7 @@ namespace DancingGoat
             services.AddSingleton<OrderService>();
             services.AddSingleton<CalculationService>();
             services.AddSingleton<CustomerDataRetriever>();
+            services.AddSingleton<BuyerIdentifierRetriever>();
             services.AddSingleton<ProductNameProvider>();
             services.AddSingleton<OrderNumberGenerator>();
             services.AddSingleton<ProductSkuValidator>();
@@ -46,10 +47,13 @@ namespace DancingGoat
             services.AddSingleton<PaymentRepository>();
             services.AddSingleton<PromotionCouponRepository>();
             services.AddSingleton<PromotionRepository>();
+            services.AddSingleton<PromotionBreakdownProvider>();
+            services.AddSingleton<PriceCalculationTotalsCalculator>();
             services.AddSingleton<ShippingRepository>();
             services.AddTransient<UpsellOrderDiscountService>();
             services.AddTransient<UpsellFreeShippingService>();
             services.AddTransient<FreeShippingEligibilityService>();
+            services.AddTransient<CartItemDiscountEligibilityService>();
             services.AddTransient<ShippingMethodOptionsService>();
             services.AddTransient<IPriceFormatter, PriceFormatter>();
 

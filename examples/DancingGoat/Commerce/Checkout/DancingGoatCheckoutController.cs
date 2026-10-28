@@ -34,7 +34,6 @@ namespace DancingGoat.Commerce;
 public sealed class DancingGoatCheckoutController : Controller
 {
     private readonly CountryStateRepository countryStateRepository;
-    private readonly WebPageUrlProvider webPageUrlProvider;
     private readonly ICurrentShoppingCartRetriever currentShoppingCartRetriever;
     private readonly ICurrentShoppingCartDiscardHandler currentShoppingCartDiscardHandler;
     private readonly UserManager<ApplicationUser> userManager;
@@ -47,12 +46,12 @@ public sealed class DancingGoatCheckoutController : Controller
     private readonly PaymentRepository paymentRepository;
     private readonly ShippingRepository shippingRepository;
     private readonly CalculationService calculationService;
+    private readonly PriceCalculationTotalsCalculator priceCalculationTotalsCalculator;
     private readonly ShippingMethodOptionsService shippingMethodOptionsService;
     private readonly IInfoProvider<OrderInfo> orderInfoProvider;
 
     public DancingGoatCheckoutController(
         CountryStateRepository countryStateRepository,
-        WebPageUrlProvider webPageUrlProvider,
         ICurrentShoppingCartRetriever currentShoppingCartRetriever,
         ICurrentShoppingCartDiscardHandler currentShoppingCartDiscardHandler,
         UserManager<ApplicationUser> userManager,
@@ -65,11 +64,11 @@ public sealed class DancingGoatCheckoutController : Controller
         PaymentRepository paymentRepository,
         ShippingRepository shippingRepository,
         CalculationService calculationService,
+        PriceCalculationTotalsCalculator priceCalculationTotalsCalculator,
         ShippingMethodOptionsService shippingMethodOptionsService,
         IInfoProvider<OrderInfo> orderInfoProvider)
     {
         this.countryStateRepository = countryStateRepository;
-        this.webPageUrlProvider = webPageUrlProvider;
         this.currentShoppingCartRetriever = currentShoppingCartRetriever;
         this.currentShoppingCartDiscardHandler = currentShoppingCartDiscardHandler;
         this.userManager = userManager;
@@ -82,6 +81,7 @@ public sealed class DancingGoatCheckoutController : Controller
         this.paymentRepository = paymentRepository;
         this.shippingRepository = shippingRepository;
         this.calculationService = calculationService;
+        this.priceCalculationTotalsCalculator = priceCalculationTotalsCalculator;
         this.shippingMethodOptionsService = shippingMethodOptionsService;
         this.orderInfoProvider = orderInfoProvider;
     }
@@ -95,9 +95,9 @@ public sealed class DancingGoatCheckoutController : Controller
 
 
     [HttpPost]
-    public async Task<IActionResult> Index(CustomerViewModel customer, CustomerAddressViewModel billingAddress, ShippingAddressViewModel shippingAddress, PaymentShippingViewModel paymentShipping, CheckoutStep checkoutStep, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(CustomerViewModel customer, CustomerAddressViewModel billingAddress, ShippingAddressViewModel shippingAddress, PaymentShippingViewModel paymentShipping, CancellationToken cancellationToken)
     {
-        if (!await IsValid(billingAddress, shippingAddress, cancellationToken) || checkoutStep == CheckoutStep.CheckoutCustomer)
+        if (!await IsValid(billingAddress, shippingAddress, cancellationToken))
         {
             return View(await GetCustomerStepViewModel(customer, billingAddress, shippingAddress, paymentShipping, cancellationToken));
         }
@@ -105,12 +105,24 @@ public sealed class DancingGoatCheckoutController : Controller
         var calculation = await CalculateCurrentShoppingCart(billingAddress, paymentShipping, cancellationToken);
         if (calculation == null)
         {
-            return View(await GetCheckoutViewModel(CheckoutStep.OrderConfirmation, customer, billingAddress, shippingAddress,
+            ModelState.AddModelError(string.Empty, localizer["Order not created. The shopping cart could not be found."]);
+
+            return View(await GetCheckoutViewModel(customer, billingAddress, shippingAddress,
                 ShoppingCartViewModel.Empty, paymentShipping, 0, 0, false, cancellationToken));
         }
 
-        return View(await GetCheckoutViewModel(CheckoutStep.OrderConfirmation, customer, billingAddress, shippingAddress,
-            calculation.ShoppingCart, paymentShipping, calculation.CalculationResult.ShippingPrice, calculation.OriginalShippingPrice, calculation.HasFreeShippingPromotion, cancellationToken));
+        // Items whose products were deleted or unpublished are dropped by the price calculation, so an order would be created without any items.
+        if (!calculation.CalculationResult.Items.Any())
+        {
+            ModelState.AddModelError(string.Empty, localizer["Order not created. The shopping cart does not contain any available products."]);
+
+            return View(await GetCheckoutViewModel(customer, billingAddress, shippingAddress,
+                ShoppingCartViewModel.Empty, paymentShipping, 0, 0, false, cancellationToken));
+        }
+
+        var orderNumber = await PlaceOrder(customer, billingAddress, shippingAddress, paymentShipping, calculation, cancellationToken);
+
+        return View("ConfirmOrder", new ConfirmOrderViewModel(orderNumber));
     }
 
 
@@ -155,39 +167,27 @@ public sealed class DancingGoatCheckoutController : Controller
     }
 
 
-    [HttpPost]
-    [Route("{languageName}/OrderConfirmation/ConfirmOrder")]
-    public async Task<IActionResult> ConfirmOrder(CustomerViewModel customer, CustomerAddressViewModel billingAddress, ShippingAddressViewModel shippingAddress, string languageName, PaymentShippingViewModel paymentShipping, CancellationToken cancellationToken)
+    /// <summary>
+    /// Creates the order from the calculated shopping cart, discards the cart and returns the new order number.
+    /// </summary>
+    /// <remarks>
+    /// The shipping price must always come from the server-side calculation, never from client input.
+    /// </remarks>
+    private async Task<string> PlaceOrder(CustomerViewModel customer, CustomerAddressViewModel billingAddress, ShippingAddressViewModel shippingAddress,
+        PaymentShippingViewModel paymentShipping, ShoppingCartCalculation calculation, CancellationToken cancellationToken)
     {
-        // Add the current language to the route values in order to tell XbyK what the current language is
-        // since this route is not handled by the XbyK content-tree-based routing
-        HttpContext.Request.RouteValues.Add(WebPageRoutingOptions.LANGUAGE_ROUTE_VALUE_KEY, languageName);
-
-        if (!ModelState.IsValid)
-        {
-            Redirect(await webPageUrlProvider.CheckoutPageUrl(languageName, cancellationToken: cancellationToken));
-        }
-
         var user = await GetAuthenticatedUser();
-
-        var shoppingCart = await currentShoppingCartRetriever.Get(cancellationToken);
-        if (shoppingCart == null)
-        {
-            return Content(localizer["Order not created. The shopping cart could not be found."]);
-        }
-
-        var shoppingCartData = shoppingCart.GetShoppingCartDataModel();
+        var languageName = currentLanguageRetriever.Get();
 
         int.TryParse(paymentShipping.PaymentMethodId, out var paymentMethodId);
         int.TryParse(paymentShipping.ShippingMethodId, out var shippingMethodId);
 
-        var orderId = await orderService.CreateOrder(shoppingCartData, customer, billingAddress, shippingAddress, user?.Id ?? 0, languageName, paymentMethodId, shippingMethodId, paymentShipping.ShippingPrice, cancellationToken);
+        var orderId = await orderService.CreateOrder(calculation.ShoppingCartData, customer, billingAddress, shippingAddress, user?.Id ?? 0, languageName,
+            paymentMethodId, shippingMethodId, calculation.CalculationResult.ShippingPrice, cancellationToken);
 
         await currentShoppingCartDiscardHandler.Discard(cancellationToken);
 
-        var orderNumber = await OrderIdToOrderNumber(orderId, cancellationToken);
-
-        return View(new ConfirmOrderViewModel(orderNumber));
+        return await OrderIdToOrderNumber(orderId, cancellationToken);
     }
 
 
@@ -249,11 +249,11 @@ public sealed class DancingGoatCheckoutController : Controller
         var calculation = await CalculateCurrentShoppingCart(billingAddress, paymentShipping, cancellationToken);
         if (calculation == null)
         {
-            return await GetCheckoutViewModel(CheckoutStep.CheckoutCustomer, customer, billingAddress, shippingAddress,
+            return await GetCheckoutViewModel(customer, billingAddress, shippingAddress,
                 ShoppingCartViewModel.Empty, paymentShipping, 0, 0, false, cancellationToken);
         }
 
-        return await GetCheckoutViewModel(CheckoutStep.CheckoutCustomer, customer, billingAddress, shippingAddress,
+        return await GetCheckoutViewModel(customer, billingAddress, shippingAddress,
             calculation.ShoppingCart, paymentShipping, calculation.CalculationResult.ShippingPrice, calculation.OriginalShippingPrice, calculation.HasFreeShippingPromotion, cancellationToken);
     }
 
@@ -278,7 +278,7 @@ public sealed class DancingGoatCheckoutController : Controller
         var calculationResult = await calculationService.Calculate(shoppingCartData, PriceCalculationMode.Checkout, shippingMethodId, paymentMethodId, billingAddress, cancellationToken);
         var (originalShippingPrice, hasFreeShippingPromotion) = await GetShippingPromotionDetails(calculationResult, shippingMethodId, cancellationToken);
 
-        return new ShoppingCartCalculation(calculationResult, await GetShoppingCartViewModel(calculationResult, shoppingCartData, cancellationToken), originalShippingPrice, hasFreeShippingPromotion);
+        return new ShoppingCartCalculation(calculationResult, await GetShoppingCartViewModel(calculationResult, shoppingCartData, cancellationToken), shoppingCartData, originalShippingPrice, hasFreeShippingPromotion);
     }
 
 
@@ -301,10 +301,10 @@ public sealed class DancingGoatCheckoutController : Controller
     }
 
 
-    private sealed record ShoppingCartCalculation(DancingGoatPriceCalculationResult CalculationResult, ShoppingCartViewModel ShoppingCart, decimal OriginalShippingPrice, bool HasFreeShippingPromotion);
+    private sealed record ShoppingCartCalculation(DancingGoatPriceCalculationResult CalculationResult, ShoppingCartViewModel ShoppingCart, ShoppingCartDataModel ShoppingCartData, decimal OriginalShippingPrice, bool HasFreeShippingPromotion);
 
 
-    private async Task<CheckoutViewModel> GetCheckoutViewModel(CheckoutStep step, CustomerViewModel customerViewModel, CustomerAddressViewModel billingAddressViewModel, ShippingAddressViewModel shippingAddressViewModel,
+    private async Task<CheckoutViewModel> GetCheckoutViewModel(CustomerViewModel customerViewModel, CustomerAddressViewModel billingAddressViewModel, ShippingAddressViewModel shippingAddressViewModel,
         ShoppingCartViewModel shoppingCartViewModel, PaymentShippingViewModel paymentShippingViewModel, decimal shippingPrice, decimal originalShippingPrice, bool hasFreeShippingPromotion, CancellationToken cancellationToken)
     {
         var user = await GetAuthenticatedUser();
@@ -381,7 +381,7 @@ public sealed class DancingGoatCheckoutController : Controller
         paymentShippingViewModel.OriginalShippingPrice = originalShippingPrice;
         paymentShippingViewModel.HasFreeShippingPromotion = hasFreeShippingPromotion;
 
-        return new CheckoutViewModel(step, customerViewModel, billingAddressViewModel, shippingAddressViewModel, shoppingCartViewModel, paymentShippingViewModel);
+        return new CheckoutViewModel(customerViewModel, billingAddressViewModel, shippingAddressViewModel, shoppingCartViewModel, paymentShippingViewModel);
     }
 
 
@@ -392,9 +392,9 @@ public sealed class DancingGoatCheckoutController : Controller
         var products = await productRepository.GetProductsByIds(shoppingCartData.Items.Select(item => item.ProductIdentifier.Identifier), cancellationToken);
         var productPageUrls = await productRepository.GetProductPageUrls(products.Cast<IContentItemFieldsSource>().Select(p => p.SystemFields.ContentItemID), cancellationToken);
 
-        var totalWithoutShippingAndTax = PriceCalculationTotalsCalculator.GetTotalWithoutShippingAndTax(calculationResult);
-        var linesSubtotal = PriceCalculationTotalsCalculator.GetLinesSubtotal(calculationResult);
-        var totalDiscount = PriceCalculationTotalsCalculator.GetTotalDiscountAmount(calculationResult);
+        var totalWithoutShippingAndTax = priceCalculationTotalsCalculator.GetTotalWithoutShippingAndTax(calculationResult);
+        var linesSubtotal = priceCalculationTotalsCalculator.GetLinesSubtotal(calculationResult);
+        var totalDiscount = priceCalculationTotalsCalculator.GetTotalDiscountAmount(calculationResult);
 
         return new ShoppingCartViewModel(
             shoppingCartData.Items.Select(item =>
@@ -415,7 +415,6 @@ public sealed class DancingGoatCheckoutController : Controller
                         item.Quantity,
                         calculationItem.LineSubtotalAfterLineDiscount,
                         item.Quantity * product.ProductFieldPrice,
-                        calculationItem.PromotionData.CatalogPromotionCandidates.FirstOrDefault(c => c.Applied)?.PromotionCandidate as DancingGoatCatalogPromotionCandidate,
                         item.ProductIdentifier.VariantIdentifier);
             })
             .Where(x => x != null)

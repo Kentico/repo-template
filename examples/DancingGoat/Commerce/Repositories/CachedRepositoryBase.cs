@@ -61,9 +61,9 @@ public abstract class CachedRepositoryBase
 
         var cacheSettings = new CacheSettings(CACHE_EXPIRATION_MINUTES, [websiteChannelContext.WebsiteChannelName, .. cacheKeyParts]);
 
-        return await cache.LoadAsync(async (cacheSettings) =>
+        return await cache.LoadAsync(async (cacheSettings, token) =>
         {
-            var result = await loader(cancellationToken);
+            var result = await loader(token);
 
             if (cacheSettings.Cached = result != null && result.Any())
             {
@@ -75,6 +75,6 @@ public abstract class CachedRepositoryBase
             }
 
             return result;
-        }, cacheSettings);
+        }, cacheSettings, cancellationToken);
     }
 }

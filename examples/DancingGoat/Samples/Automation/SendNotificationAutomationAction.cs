@@ -109,13 +109,13 @@ namespace Samples.DancingGoat
         {
             var cacheSettings = new CacheSettings(5, true, nameof(SendNotificationAutomationAction), nameof(GetRoleIds), string.Join("|", roleCodeNames));
 
-            return await progressiveCache.LoadAsync(async settings =>
+            return await progressiveCache.LoadAsync(async (settings, token) =>
             {
                 var result = await roleProvider
                     .Get()
                     .WhereIn(nameof(RoleInfo.RoleName), roleCodeNames)
                     .Column(nameof(RoleInfo.RoleID))
-                    .GetListResultAsync<int>(cancellationToken: cancellationToken);
+                    .GetListResultAsync<int>(cancellationToken: token);
 
                 if (settings.Cached = result.Count > 0)
                 {
@@ -128,7 +128,7 @@ namespace Samples.DancingGoat
                 }
 
                 return result;
-            }, cacheSettings);
+            }, cacheSettings, cancellationToken);
         }
 
 
@@ -136,13 +136,13 @@ namespace Samples.DancingGoat
         {
             var cacheSettings = new CacheSettings(5, true, nameof(SendNotificationAutomationAction), nameof(GetRoleMemberIds), string.Join("|", roleIds.OrderBy(id => id)));
 
-            return await progressiveCache.LoadAsync(async settings =>
+            return await progressiveCache.LoadAsync(async (settings, token) =>
             {
                 var userIds = await userRoleProvider
                     .Get()
                     .WhereIn(nameof(UserRoleInfo.RoleID), roleIds)
                     .Column(nameof(UserRoleInfo.UserID))
-                    .GetListResultAsync<int>(cancellationToken: cancellationToken);
+                    .GetListResultAsync<int>(cancellationToken: token);
 
                 var result = userIds.Distinct().ToList();
 
@@ -157,7 +157,7 @@ namespace Samples.DancingGoat
                 }
 
                 return result;
-            }, cacheSettings);
+            }, cacheSettings, cancellationToken);
         }
 
 

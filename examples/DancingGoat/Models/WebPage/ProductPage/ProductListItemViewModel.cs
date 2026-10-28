@@ -6,7 +6,7 @@ using DancingGoat.Commerce;
 
 namespace DancingGoat.Models
 {
-    public record ProductListItemViewModel(string Name, string ImagePath, string Url, decimal Price, decimal ListPrice, DancingGoatCatalogPromotionCandidate AppliedPromotion, ProductListItemTagViewModel Tag, int ContentItemId, bool HasVariants, bool HasFreeShipping)
+    public record ProductListItemViewModel(string Name, string ImagePath, string Url, decimal Price, decimal ListPrice, DancingGoatCatalogPromotionCandidate AppliedPromotion, ProductListItemTagViewModel Tag, int ContentItemId, bool HasVariants, bool HasFreeShipping, bool HasSpecialOffer)
     {
         /// <summary>
         /// Indicates whether a catalog promotion discount is applied to the product.
@@ -14,7 +14,7 @@ namespace DancingGoat.Models
         public bool HasDiscount => ListPrice > 0 && ListPrice > Price && AppliedPromotion is not null;
 
 
-        public static ProductListItemViewModel GetViewModel(IProductFields product, DancingGoatPriceCalculationResultItem calculationResultItem, string urlPath, ProductListItemTagViewModel tag, bool hasVariants, bool hasFreeShipping)
+        public static ProductListItemViewModel GetViewModel(IProductFields product, DancingGoatPriceCalculationResultItem calculationResultItem, string urlPath, ProductListItemTagViewModel tag, bool hasVariants, bool hasFreeShipping, bool hasSpecialOffer)
         {
             var appliedPromotion = calculationResultItem?.PromotionData.CatalogPromotionCandidates.FirstOrDefault(c => c.Applied)?.PromotionCandidate as DancingGoatCatalogPromotionCandidate;
 
@@ -28,7 +28,8 @@ namespace DancingGoat.Models
                             tag,
                             (product as IContentItemFieldsSource).SystemFields.ContentItemID,
                             hasVariants,
-                            hasFreeShipping);
+                            hasFreeShipping,
+                            hasSpecialOffer);
         }
     }
 }

@@ -87,6 +87,7 @@ var app = builder.Build();
 
 app.InitKentico();
 
+
 app.UseStaticFiles();
 
 app.UseCookiePolicy();

@@ -9,7 +9,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@kentico/management-api-mcp@latest"
+        "@kentico/management-api-mcp@31.10.0"
       ],
       "env": {
         "MANAGEMENT_API_URL": "http://localhost:54851/kentico-api/management",

@@ -12,6 +12,7 @@
 .chip { display: inline-flex; align-items: center; align-self: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 999px; white-space: nowrap; background: var(--color-band); color: var(--color-band-ink); }
 .chip-sale { background: var(--color-accent-text); color: var(--color-accent-ink); }
 .chip-shipping { background: var(--color-cream); border: 1px solid var(--color-band); color: var(--color-band); }
+.chip-offer { background: var(--color-card); border: 1px dashed var(--color-band); color: var(--color-band); }
 
 /* ---------- category tabs ---------- */
 .cat-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 40px; list-style: none; padding: 0; }
@@ -74,6 +75,9 @@
 .free-shipping-card { gap: 12px; }
 .pd-aside .free-shipping-card { margin-top: 22px; }
 .free-shipping-card .fs-message { margin: 0; font-weight: 500; }
+.cart-discount-card { gap: 12px; }
+.pd-aside .cart-discount-card { margin-top: 22px; }
+.cart-discount-card .cd-message { margin: 0; font-weight: 500; }
 
 /* ---------- long-form prose ---------- */
 .prose { max-width: 66ch; }

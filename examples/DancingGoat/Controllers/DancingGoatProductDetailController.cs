@@ -29,6 +29,7 @@ namespace DancingGoat.Controllers
         private readonly IPreferredLanguageRetriever currentLanguageRetriever;
         private readonly CalculationService calculationService;
         private readonly FreeShippingEligibilityService freeShippingEligibilityService;
+        private readonly CartItemDiscountEligibilityService cartItemDiscountEligibilityService;
 
 
         public DancingGoatProductDetailController(
@@ -38,7 +39,8 @@ namespace DancingGoat.Controllers
             TagRetriever tagRetriever,
             IPreferredLanguageRetriever currentLanguageRetriever,
             CalculationService calculationService,
-            FreeShippingEligibilityService freeShippingEligibilityService)
+            FreeShippingEligibilityService freeShippingEligibilityService,
+            CartItemDiscountEligibilityService cartItemDiscountEligibilityService)
         {
             this.contentRetriever = contentRetriever;
             this.productParametersExtractor = productParametersExtractor;
@@ -47,6 +49,7 @@ namespace DancingGoat.Controllers
             this.currentLanguageRetriever = currentLanguageRetriever;
             this.calculationService = calculationService;
             this.freeShippingEligibilityService = freeShippingEligibilityService;
+            this.cartItemDiscountEligibilityService = cartItemDiscountEligibilityService;
         }
 
 
@@ -89,9 +92,11 @@ namespace DancingGoat.Controllers
 
             var freeShippingPromotions = await freeShippingEligibilityService.GetFreeShippingPromotions(calculationResultItem, cancellationToken);
 
+            var cartItemDiscounts = await cartItemDiscountEligibilityService.GetCartItemDiscounts(calculationResultItem, cancellationToken);
+
             ViewBag.Title = productItem.ProductFieldName;
 
-            return View(new ProductViewModel(productItem.ProductFieldName, productItem.ProductFieldDescription, productItem.ProductFieldImage.FirstOrDefault()?.ImageFile.Url, calculationResultItem.LineSubtotalAfterLineDiscount, productItem.ProductFieldPrice, appliedCandidate, tag, contentItemId, parameters, variantValues, (productItem as IProductSKU)?.ProductSKUCode, variantSkuCodes, isMerchandise, freeShippingPromotions)
+            return View(new ProductViewModel(productItem.ProductFieldName, productItem.ProductFieldDescription, productItem.ProductFieldImage.FirstOrDefault()?.ImageFile.Url, calculationResultItem.LineSubtotalAfterLineDiscount, productItem.ProductFieldPrice, appliedCandidate, tag, contentItemId, parameters, variantValues, (productItem as IProductSKU)?.ProductSKUCode, variantSkuCodes, isMerchandise, freeShippingPromotions, cartItemDiscounts)
             {
                 WebPage = productPage
             });

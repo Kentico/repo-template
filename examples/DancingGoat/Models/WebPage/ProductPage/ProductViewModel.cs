@@ -7,7 +7,7 @@ using DancingGoat.Commerce;
 
 namespace DancingGoat.Models
 {
-    public record ProductViewModel(string Name, string Description, string ImagePath, decimal Price, decimal ListPrice, DancingGoatCatalogPromotionCandidate AppliedPromotion, ProductListItemTagViewModel Tag, int ContentItemId, IDictionary<string, string> Parameters, IDictionary<int, string> Variants, string Sku, IDictionary<int, string> VariantSkus, bool IsMerchandise, IEnumerable<ProductFreeShippingPromotionViewModel> FreeShippingPromotions)
+    public record ProductViewModel(string Name, string Description, string ImagePath, decimal Price, decimal ListPrice, DancingGoatCatalogPromotionCandidate AppliedPromotion, ProductListItemTagViewModel Tag, int ContentItemId, IDictionary<string, string> Parameters, IDictionary<int, string> Variants, string Sku, IDictionary<int, string> VariantSkus, bool IsMerchandise, IEnumerable<ProductFreeShippingPromotionViewModel> FreeShippingPromotions, IEnumerable<ProductCartItemDiscountViewModel> CartItemDiscounts)
         : IWebPageBasedViewModel
     {
         /// <inheritdoc/>

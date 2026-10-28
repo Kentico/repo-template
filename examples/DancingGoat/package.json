@@ -15,6 +15,9 @@
     "esbuild": "0.28.2",
     "tailwindcss": "4.3.3"
   },
+  "overrides": {
+    "basic-ftp@<6.2.1": "6.2.1"
+  },
   "engines": {
     "npm": ">= 11.10.0"
   }

@@ -30,6 +30,7 @@ namespace DancingGoat.Controllers
         private readonly ProductRepository productRepository;
         private readonly CalculationService calculationService;
         private readonly FreeShippingEligibilityService freeShippingEligibilityService;
+        private readonly CartItemDiscountEligibilityService cartItemDiscountEligibilityService;
         private readonly ProductVariantsExtractor productVariantsExtractor;
 
         private const string PRODUCT_CATEGORY_FIELD_NAME = "ProductFieldCategory";
@@ -43,6 +44,7 @@ namespace DancingGoat.Controllers
             ProductRepository productRepository,
             CalculationService calculationService,
             FreeShippingEligibilityService freeShippingEligibilityService,
+            CartItemDiscountEligibilityService cartItemDiscountEligibilityService,
             ProductVariantsExtractor productVariantsExtractor)
         {
             this.contentRetriever = contentRetriever;
@@ -52,6 +54,7 @@ namespace DancingGoat.Controllers
             this.productRepository = productRepository;
             this.calculationService = calculationService;
             this.freeShippingEligibilityService = freeShippingEligibilityService;
+            this.cartItemDiscountEligibilityService = cartItemDiscountEligibilityService;
             this.productVariantsExtractor = productVariantsExtractor;
         }
 
@@ -83,7 +86,9 @@ namespace DancingGoat.Controllers
 
             var freeShippingProductIds = await freeShippingEligibilityService.GetFreeShippingEligibleProductIds(calculationResultItems, cancellationToken);
 
-            return View(ProductListingViewModel.GetViewModel(productCategoryPage, products, calculationResultItems, productPageUrls, productTagsTaxonomy, categoryMenu, languageName, productIdsWithVariants, productCategoriesTaxonomy, freeShippingProductIds));
+            var specialOfferProductIds = await cartItemDiscountEligibilityService.GetSpecialOfferProductIds(calculationResultItems, cancellationToken);
+
+            return View(ProductListingViewModel.GetViewModel(productCategoryPage, products, calculationResultItems, productPageUrls, productTagsTaxonomy, categoryMenu, languageName, productIdsWithVariants, productCategoriesTaxonomy, freeShippingProductIds, specialOfferProductIds));
         }
     }
 }

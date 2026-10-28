@@ -1,4 +1,6 @@
-﻿using DancingGoat.Models;
+﻿using CMS.ContentEngine;
+
+using DancingGoat.Models;
 
 namespace DancingGoat.Widgets
 {
@@ -7,6 +9,9 @@ namespace DancingGoat.Widgets
     /// </summary>
     public class StorySectionWidgetViewModel
     {
+        private StorySection storySection;
+
+
         /// <summary>
         /// Story title.
         /// </summary>
@@ -17,6 +22,14 @@ namespace DancingGoat.Widgets
         /// Story text.
         /// </summary>
         public string Text { get; set; }
+
+
+        /// <summary>
+        /// Gets the AI provenance origin of the given field of the story section.
+        /// </summary>
+        /// <param name="fieldName">Code name of the story section field.</param>
+        /// <returns>Origin of the field, or <see cref="AiProvenanceOrigin.None"/> when the field is not marked.</returns>
+        public AiProvenanceOrigin GetAiProvenanceOrigin(string fieldName) => storySection?.GetAiProvenanceOrigin(fieldName) ?? AiProvenanceOrigin.None;
 
 
         /// <summary>
@@ -32,7 +45,8 @@ namespace DancingGoat.Widgets
             return new StorySectionWidgetViewModel
             {
                 Title = storySection.StorySectionTitle,
-                Text = storySection.StorySectionText
+                Text = storySection.StorySectionText,
+                storySection = storySection
             };
         }
     }

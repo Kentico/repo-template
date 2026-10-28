@@ -92,7 +92,12 @@ internal sealed class ProductDataRetriever<TProductIdentifier, TProductData> : I
             // If the product identifier is a product variant, get the SKU code for the product variant
             if (productIdentifier.VariantIdentifier.HasValue)
             {
-                skuCode = productVariantsExtractor.ExtractVariantsSKUCode(product)[productIdentifier.VariantIdentifier.Value];
+                // The extracted variants contain only published variants linked to the product,
+                // so a variant that was unpublished, deleted or unlinked is skipped like a missing product.
+                if (!productVariantsExtractor.ExtractVariantsSKUCode(product).TryGetValue(productIdentifier.VariantIdentifier.Value, out skuCode))
+                {
+                    continue;
+                }
             }
 
             var productDataDto = new DancingGoatProductData

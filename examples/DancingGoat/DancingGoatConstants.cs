@@ -51,7 +51,8 @@
 
 
         /// <summary>
-        /// TempData key carrying the "added to cart" toast message across the add-to-cart redirect.
+        /// TempData key set by a redirecting add-to-cart post. The layout shows the toast once when
+        /// the key is present; the message itself is rendered by the page, in the page's language.
         /// </summary>
         public const string CART_TOAST_TEMPDATA_KEY = "DancingGoatCartToast";
 

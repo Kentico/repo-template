@@ -14,9 +14,9 @@
     "use strict";
 
     const SUBMIT_DELAY = 450;
-    const REQUEST_TIMEOUT = 15000;
-    const UPDATE_HEADER = "X-Cart-Update";
     const UPDATED_EVENT = "cart:updated";
+
+    const cartRequest = window.DancingGoat?.cartRequest;
 
     function toInt(value, fallback) {
         const parsed = parseInt(value, 10);
@@ -37,11 +37,7 @@
 
     const cart = document.querySelector("[data-cart]");
 
-    /*
-     * Cart mutations run one at a time. Aborting a request would not undo the change the server has
-     * already made, so a second mutation waits for the first instead of cancelling it.
-     */
-    let queue = Promise.resolve();
+    // Ordering lives in the shared cart request helper; this only tracks what looks busy on screen.
     let inFlight = 0;
 
     // Stepper submits waiting out their pause, so they can be sent early when something else changes the cart.
@@ -84,15 +80,12 @@
         inFlight += 1;
         cart?.setAttribute("aria-busy", "true");
 
-        queue = queue
-            .catch(() => { })
-            .then(task)
-            .finally(() => {
-                inFlight -= 1;
-                if (inFlight === 0) {
-                    cart?.removeAttribute("aria-busy");
-                }
-            });
+        cartRequest.enqueue(task).finally(() => {
+            inFlight -= 1;
+            if (inFlight === 0) {
+                cart?.removeAttribute("aria-busy");
+            }
+        });
     }
 
     function showError() {
@@ -249,22 +242,8 @@
         // Both cart forms contain a button named "action", which shadows form.action in the DOM.
         const url = new URL(form.getAttribute("action") || location.href, document.baseURI);
 
-        enqueue(() => fetch(url, {
-            method: "POST",
-            headers: { [UPDATE_HEADER]: "1" },
-            body,
-            signal: AbortSignal.timeout(REQUEST_TIMEOUT)
-        })
-            .then((response) => {
-                const contentType = (response.headers.get("Content-Type") || "").split(";")[0].trim();
-                if (!response.ok || response.redirected || contentType !== "text/html") {
-                    throw new Error("The cart could not be updated.");
-                }
-                return response.text();
-            })
-            .then((html) => {
-                const parsed = new DOMParser().parseFromString(html, "text/html");
-
+        enqueue(() => cartRequest.post(url, body)
+            .then((parsed) => {
                 // The last line was removed: the empty-cart screen replaces the whole page, so swapping regions is not enough.
                 if (parsed.querySelector("[data-cart-empty]")) {
                     window.location.reload();
@@ -283,6 +262,7 @@
 
                 swapRegion(parsed, "[data-cart-lines]");
                 swapRegion(parsed, "[data-cart-totals]");
+                cartRequest.swapBadge(parsed);
 
                 document.querySelector("[data-cart-alert]")?.remove();
                 bindSteppers();
@@ -327,12 +307,13 @@
             const submitter = form ? form.querySelector("[data-qty-submitter]") : null;
             let entry;
 
-            if (submitter) {
+            // Without the cart request helper nothing posts in the background, so the button stays.
+            if (submitter && cartRequest) {
                 submitter.hidden = true;
             }
 
             function scheduleUpdate(source) {
-                if (!form) {
+                if (!form || !cartRequest) {
                     return;
                 }
 
@@ -372,7 +353,7 @@
      */
     cart?.addEventListener("submit", (event) => {
         const form = event.target;
-        if (!(form instanceof HTMLFormElement) || !form.matches("[data-cart-form]")) {
+        if (!(form instanceof HTMLFormElement) || !form.matches("[data-cart-form]") || !cartRequest) {
             return;
         }
 

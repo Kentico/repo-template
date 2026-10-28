@@ -139,6 +139,29 @@ public sealed class PromotionRepository
 
 
     /// <summary>
+    /// Gets the display names of multiple promotions in one query.
+    /// </summary>
+    /// <param name="promotionIds">Identifiers of the promotions.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A dictionary of promotion identifier to display name. A promotion that cannot be found is not in the result.</returns>
+    public async Task<IReadOnlyDictionary<int, string>> GetPromotionDisplayNames(IEnumerable<int> promotionIds, CancellationToken cancellationToken)
+    {
+        var promotionIdList = promotionIds.Distinct().ToList();
+        if (promotionIdList.Count == 0)
+        {
+            return new Dictionary<int, string>();
+        }
+
+        var promotions = await promotionInfoProvider.Get()
+            .Columns(nameof(PromotionInfo.PromotionID), nameof(PromotionInfo.PromotionDisplayName))
+            .WhereIn(nameof(PromotionInfo.PromotionID), promotionIdList)
+            .GetEnumerableTypedResultAsync(cancellationToken: cancellationToken);
+
+        return promotions.ToDictionary(promotion => promotion.PromotionID, promotion => promotion.PromotionDisplayName);
+    }
+
+
+    /// <summary>
     /// Creates a query for promotions of the given type that are within their active date range.
     /// </summary>
     /// <param name="promotionType">Type of the promotions to retrieve.</param>

@@ -31,3 +31,6 @@
 .btn .arrow { font-family: var(--font-sans); }
 
 .btn-block { width: 100%; justify-content: center; }
+
+/* A background request the button started is still running. */
+.btn[aria-busy="true"] { cursor: progress; opacity: 0.7; }

@@ -28,7 +28,8 @@ namespace DancingGoat.Models
         /// <param name="categoryMenuViewModel">Category menu view model to map.</param>
         /// <param name="productIdsWithVariants">Content item identifiers of products that have variants.</param>
         /// <param name="freeShippingProductIds">Content item identifiers of products that alone qualify for free shipping.</param>
-        public static StoreViewModel GetViewModel(Store store, IEnumerable<IProductFields> products, IEnumerable<DancingGoatPriceCalculationResultItem> calculationResultItems, IDictionary<int, string> productPageUrls, IEnumerable<string> productSectionTagNames, TaxonomyData productTagsTaxonomy, string languageName, IEnumerable<NavigationItemViewModel> categoryMenuViewModel, ISet<int> productIdsWithVariants, ISet<int> freeShippingProductIds)
+        /// <param name="specialOfferProductIds">Content item identifiers of products that count toward an active cart item discount.</param>
+        public static StoreViewModel GetViewModel(Store store, IEnumerable<IProductFields> products, IEnumerable<DancingGoatPriceCalculationResultItem> calculationResultItems, IDictionary<int, string> productPageUrls, IEnumerable<string> productSectionTagNames, TaxonomyData productTagsTaxonomy, string languageName, IEnumerable<NavigationItemViewModel> categoryMenuViewModel, ISet<int> productIdsWithVariants, ISet<int> freeShippingProductIds, ISet<int> specialOfferProductIds)
         {
             var productSections = new List<ProductSectionListViewModel>();
 
@@ -54,7 +55,8 @@ namespace DancingGoat.Models
                                 pageUrl,
                                 ProductListItemTagViewModel.GetViewModel(productSectionTag.Title),
                                 productIdsWithVariants.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID),
-                                freeShippingProductIds.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID));
+                                freeShippingProductIds.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID),
+                                specialOfferProductIds.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID));
                         })
                 ));
             }

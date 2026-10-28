@@ -18,7 +18,7 @@ namespace DancingGoat.Models
         /// Validates and maps <see cref="ProductCategory"/> to a <see cref="ProductListingViewModel"/>.
         /// </summary>
         public static ProductListingViewModel GetViewModel(ProductCategory productCategory, IEnumerable<IProductFields> products, IEnumerable<DancingGoatPriceCalculationResultItem> calculationResultItems, IDictionary<int, string> productPageUrls, TaxonomyData productTagsTaxonomy,
-            IEnumerable<NavigationItemViewModel> categoryMenu, string languageName, ISet<int> productIdsWithVariants, TaxonomyData productCategoriesTaxonomy, ISet<int> freeShippingProductIds)
+            IEnumerable<NavigationItemViewModel> categoryMenu, string languageName, ISet<int> productIdsWithVariants, TaxonomyData productCategoriesTaxonomy, ISet<int> freeShippingProductIds, ISet<int> specialOfferProductIds)
         {
             if (productCategory == null)
             {
@@ -44,7 +44,8 @@ namespace DancingGoat.Models
                             pageUrl,
                             ProductListItemTagViewModel.GetViewModel(product, productTagsTaxonomy),
                             productIdsWithVariants.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID),
-                            freeShippingProductIds.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID));
+                            freeShippingProductIds.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID),
+                            specialOfferProductIds.Contains((product as IContentItemFieldsSource).SystemFields.ContentItemID));
                     })
                     .OrderBy(product => product.Name));
 

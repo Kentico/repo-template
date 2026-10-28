@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 using CMS.EmailMarketing;
 
@@ -35,6 +37,9 @@ public partial class DancingGoatEmailBuilderTemplate : ComponentBase
     private EmailRecipientContext EmailRecipientContext { get; set; }
 
 
+    private IReadOnlyList<SocialLink> SocialLinks { get; set; } = [];
+
+
     [Inject]
     private IEmailContextAccessor EmailContextAccessor { get; set; }
 
@@ -48,6 +53,9 @@ public partial class DancingGoatEmailBuilderTemplate : ComponentBase
     {
         var context = EmailContextAccessor.GetContext();
         EmailModel = await context.GetEmail<BuilderEmail>();
+        SocialLinks = EmailModel?.SocialPlatforms?
+            .Where(link => !string.IsNullOrEmpty(link.SocialLinkIcon?.FirstOrDefault()?.ImageFile?.Url))
+            .ToList() ?? [];
 
         EmailRecipientContext = EmailRecipientContextAccessor.GetContext();
     }

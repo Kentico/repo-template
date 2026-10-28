@@ -11,6 +11,11 @@ namespace DancingGoat.Controllers
                 return View("NotFound");
             }
 
+            if (code == 400)
+            {
+                return View("BadRequest");
+            }
+
             if (code == 403)
             {
                 return View("AccessDenied");

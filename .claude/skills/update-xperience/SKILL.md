@@ -17,6 +17,8 @@ Run `./.claude/skills/update-xperience/scripts/Update-Xperience.ps1 [-Version <x
 
 Run the same command without `-Preview`. Done when it exits 0, or exits 2 and you have resolved every conflicted file it lists: no `<<<<<<<`, `=======`, or `>>>>>>>` lines remain in `examples/DancingGoat`. Resolve conflicts with [references/dancinggoat-overlay.md](references/dancinggoat-overlay.md). The pristine projects and merge repository stay in the work folder the script prints; `git -C <work>/merge diff base theirs` shows exactly what the template changed.
 
+The target template already includes its DancingGoat version migrations. Do not separately port changelog migrations into `examples/DancingGoat`; only intervene for unresolved merge conflicts or repository-specific overlay code that remains incompatible with the target template.
+
 ## 4. Compare root files the template also ships
 
 The script prints two paths from the target template:
@@ -24,9 +26,17 @@ The script prints two paths from the target template:
 - `.mcp.json`: add any MCP server it has that the root `.mcp.json` lacks, keeping the root's port and secret.
 - DancingGoat skills: for each skill folder, bring its content into the root `.claude/skills/<name>/`, keeping the root's `description` and the line saying paths are relative to `examples/DancingGoat/`. A skill with no root copy is added the same way.
 
-Done when every MCP server in the target file exists in the root file and every target skill body matches its root copy apart from those two lines.
+Pin `@kentico/management-api-mcp` in the root `.mcp.json` to the target Xperience version; do not use `latest`. Keep the root's port and secret.
 
-## 5. Update lock files
+Done when every MCP server in the target file exists in the root file, the Management API MCP package version matches the target Xperience version, and every target skill body matches its root copy apart from those two lines.
+
+## 5. Regenerate the DancingGoat database
+
+After confirming the target in `examples/DancingGoat/appsettings.json` is the intended local database, ask the user to confirm dropping and recreating it. Then run `./scripts/Initialize-Database.ps1 -Recreate`. The script reads the SQL server, database, and authentication details from the existing `CMSConnectionString`, restores the dbmanager tool, and invokes `kentico-xperience-dbmanager` with `--recreate-existing-database`. Do not run this against a shared or production database.
+
+Done when the script exits 0 and the database is recreated for the target Xperience version.
+
+## 6. Update lock files
 
 - In each `src/*/Client` folder: `npm install --no-audit --no-fund`
 - `dotnet tool restore`
@@ -36,11 +46,11 @@ Done when the locked restore exits 0.
 
 Then review the `Transitive security pins` group in `Directory.Packages.props`: for each pin, remove it, run `dotnet restore --force-evaluate` and `dotnet nuget why <root .slnx> <package>`, and keep the removal when the resolved version is at least the pinned one and restore reports no NU190x vulnerability warning; otherwise restore the pin. Done when every remaining pin is still needed.
 
-## 6. Fix breaking changes
+## 7. Fix breaking changes
 
 Build with `dotnet build --configuration Release --no-restore`. Fix every error in `src/` and `tests/` caused by the new version, guided by the changelog from step 2. Done when the build has no errors.
 
-## 7. Validate
+## 8. Validate
 
 1. `dotnet test --configuration Release --no-build`
 2. `dotnet format --no-restore --verify-no-changes`
@@ -48,10 +58,10 @@ Build with `dotnet build --configuration Release --no-restore`. Fix every error 
 
 Done when all three pass.
 
-## 8. Update docs
+## 9. Update docs
 
-Set the minimum Xperience version in the `README.md` version matrix to the target version when the library now requires it (any `src/` change in step 6, or the user says so). Done when every Xperience version mentioned in `README.md` and `docs/` is intentional.
+Set the minimum Xperience version in the `README.md` version matrix to the target version so it matches the Xperience package versions in `Directory.Packages.props`. Done when every Xperience version mentioned in `README.md` and `docs/` is intentional.
 
-## 9. Report
+## 10. Report
 
-List: current → target version, packages and tools changed, conflicts and how each was resolved, breaking changes fixed, validation results, and the maintainer's next step: update existing local databases with `dotnet run --project examples/DancingGoat -- --kxp-update` (see <https://docs.kentico.com/documentation/developers-and-admins/installation/update-xperience-by-kentico-projects>).
+List: current → target version, packages and tools changed, conflicts and how each was resolved, breaking changes fixed, validation results, and the maintainer's next step: update any other existing local databases with `dotnet run --project examples/DancingGoat -- --kxp-update` (see <https://docs.kentico.com/documentation/developers-and-admins/installation/update-xperience-by-kentico-projects>); DancingGoat's database was recreated in step 5.

@@ -51,8 +51,8 @@ namespace DancingGoat.Widgets
 
             var storySections = await contentRetriever.RetrieveContent<StorySection>(
                 new RetrieveContentParameters(),
-                query => query.Where(where => where.WhereEquals(nameof(IContentQueryDataContainer.ContentItemGUID), selectedStorySectionGuid)),
-                new RetrievalCacheSettings($"WhereEquals_{nameof(IContentQueryDataContainer.ContentItemGUID)}_{selectedStorySectionGuid}"),
+                query => query.Where(where => where.WhereEquals(nameof(IContentQueryDataContainer.ContentItemGUID), selectedStorySectionGuid)).WithAiProvenance(),
+                new RetrievalCacheSettings($"WhereEquals_{nameof(IContentQueryDataContainer.ContentItemGUID)}_{selectedStorySectionGuid}_WithAiProvenance"),
                 cancellationToken
             );
 

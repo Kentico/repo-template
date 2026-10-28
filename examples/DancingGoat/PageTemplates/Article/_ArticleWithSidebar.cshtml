@@ -29,10 +29,14 @@
             }
             <div>
                 <span class="date-line">@templateModel.PublicationDate.ToString("D")</span>
-                <h1 class="display">@HeadingFormatter.Format(templateModel.Title)</h1>
+                <ai-scope origin="@templateModel.GetAiProvenanceOrigin(nameof(ArticlePage.ArticleTitle))" label-position="After">
+                    <h1 class="display">@HeadingFormatter.Format(templateModel.Title)</h1>
+                </ai-scope>
                 @if (!string.IsNullOrEmpty(templateModel.Summary))
                 {
-                    <p class="lede">@templateModel.Summary</p>
+                    <ai-scope origin="@templateModel.GetAiProvenanceOrigin(nameof(ArticlePage.ArticlePageSummary))" label-position="After">
+                        <p class="lede">@templateModel.Summary</p>
+                    </ai-scope>
                 }
             </div>
         </div>
@@ -42,12 +46,16 @@
 <section class="block-tight">
     <div class="wrap">
         <div class="article-layout">
-            <div class="prose">
-                @Html.Kentico().ResolveUrls(templateModel.Text)
+            <div class="article-main">
+                <ai-scope origin="@templateModel.GetAiProvenanceOrigin(nameof(ArticlePage.ArticlePageText))">
+                    <div class="prose">
+                        @Html.Kentico().ResolveUrls(templateModel.Text)
+                    </div>
+                </ai-scope>
             </div>
             <aside class="article-side">
                 <editable-area area-identifier="sidebar"
-                               area-options-allowed-widgets="new[] { SystemComponentIdentifiers.RICH_TEXT_WIDGET_IDENTIFIER, ComponentIdentifiers.CTA_BUTTON_WIDGET }" />
+                               area-options-allowed-widgets="new[] { SystemComponentIdentifiers.RICH_TEXT_WIDGET_IDENTIFIER, ComponentIdentifiers.CTA_BUTTON_WIDGET, StorySectionWidgetViewComponent.IDENTIFIER }" />
             </aside>
         </div>
     </div>

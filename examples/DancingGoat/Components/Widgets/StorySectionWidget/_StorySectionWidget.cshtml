@@ -1,4 +1,5 @@
 ﻿@using DancingGoat.Helpers
+@using DancingGoat.Models
 
 @model DancingGoat.Widgets.StorySectionWidgetViewModel
 
@@ -19,13 +20,17 @@ else
         <div class="wrap">
             <div class="section-head reveal">
                 <div>
-                    <h2 class="display">@HeadingFormatter.Format(Model.Title)</h2>
+                    <ai-scope origin="@Model.GetAiProvenanceOrigin(nameof(StorySection.StorySectionTitle))" label-position="After">
+                        <h2 class="display">@HeadingFormatter.Format(Model.Title)</h2>
+                    </ai-scope>
                 </div>
             </div>
             <div class="story-band reveal">
                 <div class="grain"></div>
                 <div class="story-inner">
-                    <p class="display">@Model.Text</p>
+                    <ai-scope origin="@Model.GetAiProvenanceOrigin(nameof(StorySection.StorySectionText))" label-position="After" on-dark-surface="true">
+                        <p class="display">@Model.Text</p>
+                    </ai-scope>
                 </div>
             </div>
         </div>

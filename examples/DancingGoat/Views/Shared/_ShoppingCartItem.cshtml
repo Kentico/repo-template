@@ -52,5 +52,10 @@
             </div>
             <button class="link-remove" data-cart-focus="remove-@cartItem.ContentItemId-@cartItem.VariantId" data-cart-focus-group="line" data-cart-announce="@HtmlLocalizer["Item removed from your cart."]" name="action" value="@DancingGoatShoppingCartController.REMOVE_ITEM">@HtmlLocalizer["Remove"]</button>
         </div>
+
+        @if (cartItem.PromotionBreakdowns.Count > 0)
+        {
+            <partial name="_PromotionBreakdowns" model="cartItem.PromotionBreakdowns" />
+        }
     </form>
 </div>

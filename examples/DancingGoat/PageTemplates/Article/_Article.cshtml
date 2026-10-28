@@ -2,6 +2,7 @@
 @using DancingGoat.PageTemplates
 @using DancingGoat.Models
 @using DancingGoat.Services
+@using DancingGoat.Widgets
 
 @inject WebPageUrlProvider webPageUrlProvider
 
@@ -30,10 +31,14 @@
             }
             <div>
                 <span class="date-line">@viewModel.PublicationDate.ToString("D")</span>
-                <h1 class="display">@HeadingFormatter.Format(viewModel.Title)</h1>
+                <ai-scope origin="@viewModel.GetAiProvenanceOrigin(nameof(ArticlePage.ArticleTitle))" label-position="After">
+                    <h1 class="display">@HeadingFormatter.Format(viewModel.Title)</h1>
+                </ai-scope>
                 @if (!string.IsNullOrEmpty(viewModel.Summary))
                 {
-                    <p class="lede">@viewModel.Summary</p>
+                    <ai-scope origin="@viewModel.GetAiProvenanceOrigin(nameof(ArticlePage.ArticlePageSummary))" label-position="After">
+                        <p class="lede">@viewModel.Summary</p>
+                    </ai-scope>
                 }
             </div>
         </div>
@@ -43,8 +48,14 @@
 <section class="block-tight">
     <div class="wrap">
         <div class="article-layout">
-            <div class="prose">
-                @Html.Raw(viewModel.Text)
+            <div class="article-main">
+                <ai-scope origin="@viewModel.GetAiProvenanceOrigin(nameof(ArticlePage.ArticlePageText))">
+                    <div class="prose">
+                        @Html.Raw(viewModel.Text)
+                    </div>
+                </ai-scope>
+                <editable-area area-identifier="main"
+                               area-options-allowed-widgets="new[] { SystemComponentIdentifiers.RICH_TEXT_WIDGET_IDENTIFIER, ComponentIdentifiers.CTA_BUTTON_WIDGET, KeyTakeawaysWidgetViewComponent.IDENTIFIER }" />
             </div>
             @if (hasRelatedArticles)
             {

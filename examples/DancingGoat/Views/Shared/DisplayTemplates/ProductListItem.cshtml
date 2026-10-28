@@ -14,7 +14,7 @@
 <article class="product-card">
     <a class="pc-overlay" href="@Model.Url" aria-label="@Model.Name"></a>
     <div class="media">
-        @if (Model.Tag != null || Model.HasFreeShipping)
+        @if (Model.Tag != null || Model.HasFreeShipping || Model.HasSpecialOffer)
         {
             <div class="card-chips">
                 @if (Model.Tag != null)
@@ -24,6 +24,10 @@
                 @if (Model.HasFreeShipping)
                 {
                     <span class="chip chip-shipping">@HtmlLocalizer["Free shipping"]</span>
+                }
+                @if (Model.HasSpecialOffer)
+                {
+                    <span class="chip chip-offer">@HtmlLocalizer["Special offer"]</span>
                 }
             </div>
         }
@@ -51,7 +55,7 @@
     }
     else
     {
-        <form class="card-add-form" method="post" asp-controller="DancingGoatShoppingCart" asp-action="Add" asp-all-route-data="addRouteData">
+        <form class="card-add-form" method="post" asp-controller="DancingGoatShoppingCart" asp-action="Add" asp-all-route-data="addRouteData" data-cart-add-form>
             <input type="hidden" name="contentItemId" value="@Model.ContentItemId" />
             <input type="hidden" name="quantity" value="1" />
             <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />

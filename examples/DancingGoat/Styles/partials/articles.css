@@ -15,6 +15,7 @@
 
 .article-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 72px; margin-top: 26px; }
 .article-side { display: grid; gap: 20px; align-content: start; }
+.article-main { min-width: 0; max-width: 666px; }
 .side-card { position: relative; display: block; background: var(--color-card); border: 1px solid var(--color-line); border-radius: calc(var(--radius-card) - 6px); overflow: hidden; transition: transform 0.25s, box-shadow 0.25s; }
 .side-card:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(34, 22, 16, 0.1); }
 .side-card .media { aspect-ratio: 16 / 9; overflow: hidden; background: var(--color-card); }
@@ -34,4 +35,56 @@
 
 @media (max-width: 640px) {
     .articles-grid-page, .article-side { grid-template-columns: 1fr; }
+}
+
+/* ---------- widgets placed below the article text: the section adds no spacing of its own ---------- */
+.article-main .block { padding: 0; }
+.article-main .wrap { padding: 0; max-width: none; }
+.article-main .takeaways { margin-top: 56px; }
+
+/* ---------- Story section widget placed in the article sidebar ---------- */
+.article-side .block { padding: 0; }
+.article-side .wrap { padding: 0; max-width: none; }
+.article-side .section-head { margin-bottom: 12px; }
+.article-side .story-band { margin-top: 0; }
+.article-side .story-inner { padding: 28px 24px; }
+.article-side .story-inner .display { font-size: var(--text-h4); }
+
+/* ---------- key takeaways widget, placed below the article text ---------- */
+.takeaways {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 36px 40px 32px 40px;
+    background: var(--color-card);
+    border-radius: var(--radius-card);
+}
+
+.takeaways h3 { margin: 0; }
+
+.takeaways-list { list-style: none; margin: 0; padding: 0; }
+
+.takeaways-list li {
+    position: relative;
+    padding: 16px 0 16px 22px;
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+}
+
+.takeaways-list li:last-child { border-bottom: 0; }
+
+.takeaways-list li::before {
+    content: "";
+    position: absolute;
+    top: 27px;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+}
+
+@media (max-width: 640px) {
+    .takeaways { padding: 28px 24px 24px 24px; }
 }

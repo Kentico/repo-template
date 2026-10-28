@@ -177,9 +177,6 @@
   <data name="Back to articles" xml:space="preserve">
     <value>Volver a los artículos</value>
   </data>
-  <data name="Back to checkout" xml:space="preserve">
-    <value>Volver al pago</value>
-  </data>
   <data name="Back to shopping cart" xml:space="preserve">
     <value>Volver al carrito</value>
   </data>
@@ -192,11 +189,14 @@
   <data name="Billing address" xml:space="preserve">
     <value>Dirección de facturación</value>
   </data>
-  <data name="Billing details" xml:space="preserve">
-    <value>Datos de facturación</value>
-  </data>
   <data name="Buy {0} or more items and get free shipping." xml:space="preserve">
     <value>Compra {0} artículos o más y consigue el envío gratis.</value>
+  </data>
+  <data name="Buy {0} or more qualifying products and get the cheapest one free." xml:space="preserve">
+    <value>Compra {0} productos válidos o más y llévate el más barato gratis.</value>
+  </data>
+  <data name="Buy {0} or more qualifying products and get the cheapest one {1}% off." xml:space="preserve">
+    <value>Compra {0} productos válidos o más y llévate el más barato con un {1}% de descuento.</value>
   </data>
   <data name="Cart total" xml:space="preserve">
     <value>Total del carrito</value>
@@ -267,8 +267,8 @@
   <data name="Explore the store" xml:space="preserve">
     <value>Explora la tienda</value>
   </data>
-  <data name="Fill in your billing details and proceed to review your order." xml:space="preserve">
-    <value>Completa tus datos de facturación y continúa para revisar tu pedido.</value>
+  <data name="Fill in your details to place your order." xml:space="preserve">
+    <value>Completa tus datos para realizar el pedido.</value>
   </data>
   <data name="Fresh crops, café openings and brewing tips — once a month, no noise." xml:space="preserve">
     <value>Nuevas cosechas, aperturas de cafeterías y consejos de preparación: una vez al mes, sin ruido.</value>
@@ -339,8 +339,11 @@
   <data name="Oops! Page not found..." xml:space="preserve">
     <value>¡Vaya! Página no encontrada...</value>
   </data>
-  <data name="Order confirmation" xml:space="preserve">
-    <value>Confirmación del pedido</value>
+  <data name="Oops! Something went wrong" xml:space="preserve">
+    <value>¡Vaya! Algo ha salido mal</value>
+  </data>
+  <data name="Oops! Something went wrong..." xml:space="preserve">
+    <value>¡Vaya! Algo ha salido mal...</value>
   </data>
   <data name="Order created" xml:space="preserve">
     <value>Pedido creado</value>
@@ -348,14 +351,20 @@
   <data name="Order discount" xml:space="preserve">
     <value>Descuento del pedido</value>
   </data>
+  <data name="Order not created. The shopping cart could not be found." xml:space="preserve">
+    <value>No se ha creado el pedido. No se ha encontrado el carrito de la compra.</value>
+  </data>
+  <data name="Order not created. The shopping cart does not contain any available products." xml:space="preserve">
+    <value>No se ha creado el pedido. El carrito de la compra no contiene ningún producto disponible.</value>
+  </data>
   <data name="Order summary" xml:space="preserve">
     <value>Resumen del pedido</value>
   </data>
   <data name="Order summary updated." xml:space="preserve">
     <value>Resumen del pedido actualizado.</value>
   </data>
-  <data name="Ordered items" xml:space="preserve">
-    <value>Artículos pedidos</value>
+  <data name="Original price" xml:space="preserve">
+    <value>Precio original</value>
   </data>
   <data name="Our cafés" xml:space="preserve">
     <value>Nuestras cafeterías</value>
@@ -393,9 +402,6 @@
   <data name="Quantity updated." xml:space="preserve">
     <value>Cantidad actualizada.</value>
   </data>
-  <data name="Quantity:" xml:space="preserve">
-    <value>Cantidad:</value>
-  </data>
   <data name="Read the article" xml:space="preserve">
     <value>Leer el artículo</value>
   </data>
@@ -410,12 +416,6 @@
   </data>
   <data name="Remove code" xml:space="preserve">
     <value>Eliminar código</value>
-  </data>
-  <data name="Review order" xml:space="preserve">
-    <value>Revisar el pedido</value>
-  </data>
-  <data name="Review your order" xml:space="preserve">
-    <value>Revisa tu pedido</value>
   </data>
   <data name="Revoke" xml:space="preserve">
     <value>Revocar</value>
@@ -453,9 +453,6 @@
   <data name="Shipping and payment" xml:space="preserve">
     <value>Envío y pago</value>
   </data>
-  <data name="Shipping details" xml:space="preserve">
-    <value>Datos de envío</value>
-  </data>
   <data name="Shopping cart" xml:space="preserve">
     <value>Carrito de la compra</value>
   </data>
@@ -482,6 +479,9 @@
   </data>
   <data name="Small-batch specialty coffee, sourced directly from micro farms and roasted in Chicago." xml:space="preserve">
     <value>Café de especialidad en lotes pequeños, comprado directamente a microfincas y tostado en Chicago.</value>
+  </data>
+  <data name="Special offer" xml:space="preserve">
+    <value>Oferta especial</value>
   </data>
   <data name="Spend {0} more and get free shipping." xml:space="preserve">
     <value>Gasta {0} más y consigue envío gratis.</value>
@@ -525,6 +525,9 @@
   <data name="The order summary could not be refreshed. The totals below may be out of date." xml:space="preserve">
     <value>No se pudo actualizar el resumen del pedido. Los totales que se muestran pueden estar desactualizados.</value>
   </data>
+  <data name="The product could not be added to your cart. Please try again." xml:space="preserve">
+    <value>No se pudo añadir el producto a tu carrito. Inténtalo de nuevo.</value>
+  </data>
   <data name="The website now stores cookies on your computer, tracks activity, creates personalized content and processes analytics. You can find more information on our" xml:space="preserve">
     <value>En la actualidad, el sitio web almacena cookies en su ordenador, realiza un seguimiento de la actividad, crea contenidos personalizados y procesa datos analíticos. Puede encontrar más información en nuestra</value>
   </data>
@@ -546,8 +549,8 @@
   <data name="Update" xml:space="preserve">
     <value>Actualizar</value>
   </data>
-  <data name="Use the coupon code {0} in shopping cart." xml:space="preserve">
-    <value>Usa el código de cupón {0} en el carrito de compra.</value>
+  <data name="Use the coupon code '{0}' in shopping cart." xml:space="preserve">
+    <value>Usa el código de cupón '{0}' en el carrito de compra.</value>
   </data>
   <data name="User" xml:space="preserve">
     <value>Usuario</value>
@@ -566,6 +569,9 @@
   </data>
   <data name="We are really sorry, something has gone wrong. It seems that page you requested doesn't exist." xml:space="preserve">
     <value>Lo sentimos mucho, algo ha salido mal. Parece que la página que solicitaste no existe.</value>
+  </data>
+  <data name="We could not process your request. If the page was open for a long time, go back, reload it and try again." xml:space="preserve">
+    <value>No pudimos procesar tu solicitud. Si la página estuvo abierta mucho tiempo, vuelve atrás, recárgala e inténtalo de nuevo.</value>
   </data>
   <data name="Welcome back" xml:space="preserve">
     <value>Bienvenido de nuevo</value>
@@ -609,9 +615,6 @@
   <data name="Your cart is empty" xml:space="preserve">
     <value>Tu carrito está vacío</value>
   </data>
-  <data name="Your order cannot be completed" xml:space="preserve">
-    <value>No se puede completar tu pedido</value>
-  </data>
   <data name="Your promo/discount codes" xml:space="preserve">
     <value>Tus códigos promocionales/de descuento</value>
   </data>
@@ -620,6 +623,9 @@
   </data>
   <data name="{0} or {1}" xml:space="preserve">
     <value>{0} o {1}</value>
+  </data>
+  <data name="{0} × {1}" xml:space="preserve">
+    <value>{0} × {1}</value>
   </data>
   <data name="{0} — {1}" xml:space="preserve">
     <value>{0} — {1}</value>

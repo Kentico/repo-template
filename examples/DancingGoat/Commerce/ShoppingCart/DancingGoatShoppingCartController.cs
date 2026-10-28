@@ -12,6 +12,7 @@ using DancingGoat.Commerce;
 using DancingGoat.Helpers;
 using DancingGoat.Models;
 using DancingGoat.Services;
+using DancingGoat.ViewComponents;
 
 using Kentico.Commerce.Web.Mvc;
 using Kentico.Content.Web.Mvc.Routing;
@@ -35,6 +36,8 @@ public sealed class DancingGoatShoppingCartController : Controller
     private readonly ProductRepository productRepository;
     private readonly PromotionCouponRepository promotionCouponRepository;
     private readonly PromotionRepository promotionRepository;
+    private readonly PromotionBreakdownProvider promotionBreakdownProvider;
+    private readonly PriceCalculationTotalsCalculator priceCalculationTotalsCalculator;
     private readonly CalculationService calculationService;
     private readonly UpsellOrderDiscountService upsellOrderDiscountService;
     private readonly UpsellFreeShippingService upsellFreeShippingService;
@@ -64,6 +67,8 @@ public sealed class DancingGoatShoppingCartController : Controller
         ProductRepository productRepository,
         PromotionCouponRepository promotionCouponRepository,
         PromotionRepository promotionRepository,
+        PromotionBreakdownProvider promotionBreakdownProvider,
+        PriceCalculationTotalsCalculator priceCalculationTotalsCalculator,
         CalculationService calculationService,
         UpsellOrderDiscountService upsellOrderDiscountService,
         UpsellFreeShippingService upsellFreeShippingService,
@@ -77,6 +82,8 @@ public sealed class DancingGoatShoppingCartController : Controller
         this.productRepository = productRepository;
         this.promotionCouponRepository = promotionCouponRepository;
         this.promotionRepository = promotionRepository;
+        this.promotionBreakdownProvider = promotionBreakdownProvider;
+        this.priceCalculationTotalsCalculator = priceCalculationTotalsCalculator;
         this.calculationService = calculationService;
         this.upsellOrderDiscountService = upsellOrderDiscountService;
         this.upsellFreeShippingService = upsellFreeShippingService;
@@ -110,16 +117,17 @@ public sealed class DancingGoatShoppingCartController : Controller
         var productPageUrls = await productRepository.GetProductPageUrls(products.Cast<IContentItemFieldsSource>().Select(p => p.SystemFields.ContentItemID), cancellationToken);
 
         var calculationResult = await calculationService.CalculateShoppingCart(shoppingCartData, cancellationToken);
-        var totalWithoutShippingAndTax = PriceCalculationTotalsCalculator.GetTotalWithoutShippingAndTax(calculationResult);
-        var subtotalAfterLineDiscount = PriceCalculationTotalsCalculator.GetSubtotalAfterLineDiscount(calculationResult);
-        var linesSubtotal = PriceCalculationTotalsCalculator.GetLinesSubtotal(calculationResult);
-        var totalDiscount = PriceCalculationTotalsCalculator.GetTotalDiscountAmount(calculationResult);
-        var orderDiscount = PriceCalculationTotalsCalculator.GetOrderDiscountAmount(calculationResult);
+        var totalWithoutShippingAndTax = priceCalculationTotalsCalculator.GetTotalWithoutShippingAndTax(calculationResult);
+        var subtotalAfterLineDiscount = priceCalculationTotalsCalculator.GetSubtotalAfterLineDiscount(calculationResult);
+        var linesSubtotal = priceCalculationTotalsCalculator.GetLinesSubtotal(calculationResult);
+        var totalDiscount = priceCalculationTotalsCalculator.GetTotalDiscountAmount(calculationResult);
+        var orderDiscount = priceCalculationTotalsCalculator.GetOrderDiscountAmount(calculationResult);
 
         var appliedOrderPromotionId = calculationResult.PromotionData.OrderPromotionCandidates.FirstOrDefault(c => c.Applied)?.PromotionID;
         var orderDiscountName = await promotionRepository.GetPromotionDisplayName(appliedOrderPromotionId, cancellationToken);
         var orderDiscountText = await GetOrderDiscountInfoText(calculationResult, subtotalAfterLineDiscount, shoppingCartData, cancellationToken);
         var freeShippingText = await GetFreeShippingInfoText(calculationResult, shoppingCartData, cancellationToken);
+        var promotionBreakdowns = await promotionBreakdownProvider.GetPromotionBreakdowns(calculationResult, cancellationToken);
 
         var items = shoppingCartData.Items.Select(item =>
             {
@@ -139,9 +147,11 @@ public sealed class DancingGoatShoppingCartController : Controller
                         item.Quantity,
                         calculationItem.LineSubtotalAfterLineDiscount,
                         product.ProductFieldPrice * item.Quantity,
-                        calculationItem.PromotionData.CatalogPromotionCandidates.FirstOrDefault(c => c.Applied)?.PromotionCandidate as DancingGoatCatalogPromotionCandidate,
                         item.ProductIdentifier.VariantIdentifier,
-                        calculationItem.ProductData.SKU);
+                        calculationItem.ProductData.SKU)
+                    {
+                        PromotionBreakdowns = promotionBreakdowns.GetValueOrDefault(calculationItem.ProductIdentifier, [])
+                    };
             })
             .Where(x => x != null)
             .ToList();
@@ -165,6 +175,7 @@ public sealed class DancingGoatShoppingCartController : Controller
 
     [HttpPost]
     [Route("/ShoppingCart/HandleUpdateRemove")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> HandleUpdateRemove(int contentItemId, int quantity, int? variantId, string action, string languageName, CancellationToken cancellationToken)
     {
         if (string.Equals(action, REMOVE_ITEM, StringComparison.OrdinalIgnoreCase))
@@ -184,6 +195,7 @@ public sealed class DancingGoatShoppingCartController : Controller
 
     [HttpPost]
     [Route("/ShoppingCart/Add")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Add(int contentItemId, int quantity, int? variantId, string languageName, string returnUrl, CancellationToken cancellationToken)
     {
         var shoppingCart = await GetCurrentShoppingCart(cancellationToken);
@@ -192,7 +204,15 @@ public sealed class DancingGoatShoppingCartController : Controller
 
         shoppingCart.Update();
 
-        TempData[DancingGoatConstants.CART_TOAST_TEMPDATA_KEY] = localizer["Added to cart"].Value;
+        // This route carries no language context, so anything localized here would come out in the
+        // default language. The page owns the toast text and only the badge is returned; the flag
+        // below tells a full page load to show the toast once.
+        if (Request.Headers.ContainsKey(CART_UPDATE_HEADER))
+        {
+            return ViewComponent(typeof(CartBadgeViewComponent));
+        }
+
+        TempData[DancingGoatConstants.CART_TOAST_TEMPDATA_KEY] = true;
 
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
@@ -205,6 +225,7 @@ public sealed class DancingGoatShoppingCartController : Controller
 
     [HttpPost]
     [Route("/ShoppingCart/HandleCouponCode")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> HandleCouponCode(string couponCode, string action, string languageName, CancellationToken cancellationToken)
     {
         string couponCodeAttempt = null;
@@ -392,6 +413,14 @@ public sealed class DancingGoatShoppingCartController : Controller
                 if (catalogCandidate != null)
                 {
                     return catalogCandidate.Applied ? CouponCodeStatus.Applied : CouponCodeStatus.Applicable;
+                }
+
+                var cartItemCandidate = item.PromotionData.CartItemPromotionCandidates.FirstOrDefault(
+                    c => c.CouponCode?.Equals(couponCode, StringComparison.OrdinalIgnoreCase) ?? false);
+
+                if (cartItemCandidate != null)
+                {
+                    return cartItemCandidate.Applied ? CouponCodeStatus.Applied : CouponCodeStatus.Applicable;
                 }
             }
 

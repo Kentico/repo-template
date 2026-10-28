@@ -1,8 +1,0 @@
-﻿@using DancingGoat.Models
-
-@model ShoppingCartViewModel
-
-@foreach (var cartItem in Model.Items)
-{
-    <partial name="_ReviewOrderItem" model="cartItem" />
-}

@@ -10,27 +10,20 @@ using DancingGoat.Models;
 
 using Kentico.Content.Web.Mvc;
 using Kentico.Content.Web.Mvc.Routing;
-using Kentico.Membership;
-
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DancingGoat.Commerce;
 
 public sealed class CalculationService
 {
-    private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly BuyerIdentifierRetriever buyerIdentifierRetriever;
     private readonly IPriceCalculationService<DancingGoatPriceCalculationRequest, DancingGoatPriceCalculationResult> priceCalculationService;
-    private readonly CustomerDataRetriever customerDataRetriever;
     private readonly IPreferredLanguageRetriever preferredLanguageRetriever;
 
 
-    public CalculationService(IHttpContextAccessor httpContextAccessor, IPriceCalculationService<DancingGoatPriceCalculationRequest, DancingGoatPriceCalculationResult> priceCalculationService, CustomerDataRetriever customerDataRetriever, IWebPageDataContextRetriever webPageDataContextRetriever, IPreferredLanguageRetriever preferredLanguageRetriever)
+    public CalculationService(BuyerIdentifierRetriever buyerIdentifierRetriever, IPriceCalculationService<DancingGoatPriceCalculationRequest, DancingGoatPriceCalculationResult> priceCalculationService, IWebPageDataContextRetriever webPageDataContextRetriever, IPreferredLanguageRetriever preferredLanguageRetriever)
     {
-        this.httpContextAccessor = httpContextAccessor;
+        this.buyerIdentifierRetriever = buyerIdentifierRetriever;
         this.priceCalculationService = priceCalculationService;
-        this.customerDataRetriever = customerDataRetriever;
         this.preferredLanguageRetriever = preferredLanguageRetriever;
     }
 
@@ -78,10 +71,7 @@ public sealed class CalculationService
     /// </summary>
     public async Task<DancingGoatPriceCalculationResult> Calculate(ShoppingCartDataModel shoppingCartData, PriceCalculationMode mode, int shippingMethodId, int paymentMethodId, CustomerAddressViewModel customerAddress, CancellationToken cancellationToken)
     {
-        var userManager = httpContextAccessor.HttpContext.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
-
-        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext?.User);
-        int memberId = (user != null) ? user.Id : 0;
+        var buyerIdentifier = await buyerIdentifierRetriever.GetCurrentBuyerIdentifier();
 
         var calculationRequest = new DancingGoatPriceCalculationRequest
         {
@@ -93,7 +83,7 @@ public sealed class CalculationService
             ShippingMethodId = shippingMethodId,
             PaymentMethodId = paymentMethodId,
             BillingAddress = GetCustomerData(customerAddress),
-            BuyerIdentifier = BuyerIdentifier.FromMemberId(memberId),
+            BuyerIdentifier = buyerIdentifier,
             LanguageName = preferredLanguageRetriever.Get(),
             Mode = mode,
             CouponCodes = shoppingCartData.CouponCodes

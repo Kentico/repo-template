@@ -386,6 +386,11 @@ h3.display, h4.display {
   width: 100%;
 }
 
+.btn[aria-busy="true"] {
+  cursor: progress;
+  opacity: .7;
+}
+
 .hero {
   padding: var(--nav-clearance) 32px 0 32px;
 }
@@ -1020,6 +1025,12 @@ section.block.section-cappuccino .section-surface p {
   color: var(--color-band);
 }
 
+.chip-offer {
+  background: var(--color-card);
+  border: 1px dashed var(--color-band);
+  color: var(--color-band);
+}
+
 .cat-tabs {
   flex-wrap: wrap;
   gap: 10px;
@@ -1310,6 +1321,19 @@ section.block.section-cappuccino .section-surface p {
 }
 
 .free-shipping-card .fs-message {
+  margin: 0;
+  font-weight: 500;
+}
+
+.cart-discount-card {
+  gap: 12px;
+}
+
+.pd-aside .cart-discount-card {
+  margin-top: 22px;
+}
+
+.cart-discount-card .cd-message {
   margin: 0;
   font-weight: 500;
 }

@@ -24,7 +24,8 @@
     var languageCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
     var currentLanguage = languageCode.ToUpperInvariant();
 
-    var cartToastMessage = TempData[DancingGoatConstants.CART_TOAST_TEMPDATA_KEY] as string;
+    // Which pill a full page load shows on arrival; empty means none.
+    var cartToastOnLoad = TempData[DancingGoatConstants.CART_TOAST_TEMPDATA_KEY] != null ? "added" : null;
 }
 
 <!DOCTYPE html>
@@ -104,17 +105,32 @@
         @RenderBody()
     </main>
     <partial name="_Footer" />
-    @if (!string.IsNullOrEmpty(cartToastMessage))
-    {
-        <div class="dg-toast" data-autoshow="true" role="status">
-            <span>@cartToastMessage</span>
+    @*
+        Both toast pills live on the page, not in the add-to-cart response: the /shoppingcart/add
+        route has no language context, so text rendered there would come out in the default
+        language. The script clones the pill it needs into the slot, which is the live region a
+        screen reader announces from.
+    *@
+    <div data-cart-toast role="status" aria-live="polite" data-cart-toast-autoshow="@cartToastOnLoad"></div>
+    <template data-cart-toast-added>
+        <div class="dg-toast">
+            <span>@HtmlLocalizer["Added to cart"]</span>
             <a href="@shoppingCartPageUrl">@HtmlLocalizer["View cart"]</a>
             <button type="button" class="toast-close" data-toast-close aria-label="@HtmlLocalizer["Close"]">&times;</button>
         </div>
-    }
-    <script src="~/Scripts/siteHeader.js" defer></script>
-    <script src="~/Scripts/reveal.js" defer></script>
-    <script src="~/Scripts/toast.js" defer></script>
+    </template>
+    <template data-cart-toast-error>
+        <div class="dg-toast">
+            <span>@HtmlLocalizer["The product could not be added to your cart. Please try again."]</span>
+            <button type="button" class="toast-close" data-toast-close aria-label="@HtmlLocalizer["Close"]">&times;</button>
+        </div>
+    </template>
+    <script src="~/Scripts/siteHeader.js" asp-append-version="true" defer></script>
+    <script src="~/Scripts/reveal.js" asp-append-version="true" defer></script>
+    <script src="~/Scripts/cartRequest.js" asp-append-version="true" defer></script>
+    <script src="~/Scripts/toast.js" asp-append-version="true" defer></script>
+    <script src="~/Scripts/addToCart.js" asp-append-version="true" defer></script>
+    <script src="~/Scripts/aiScope.js" defer></script>
     <page-builder-scripts />
     @RenderSection("scripts", required: false)
 </body>
