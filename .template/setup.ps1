@@ -8,18 +8,21 @@
 
   1. Reads every placeholders/*.json (name order). Each file maps a placeholder to a value that may use
      the tokens {ProjectName}, {ProjectNameDashed}, {ProjectShortName}, {ProjectShortNameLower},
-     {RepositoryName}, {OwnerTeam}. Pairs with an empty value are skipped.
-  2. Replaces the placeholders as plain strings in the text files of the repository, keeping line endings.
+     {RepositoryName}, {OwnerTeam}, {Year}. Pairs with an empty or null value are skipped.
+     A file can also set "repositoryNamePrefix" for the derived repository name; the last file that sets it wins.
+  2. Replaces the placeholders as plain strings in the text files of the repository, keeping line endings and the encoding
+     (a byte order mark is kept, none is added).
   3. Renames files and folders whose names contain a placeholder, deepest first.
   4. Runs hooks/*.ps1 (name order) with the resolved values; -HookOptions is handed to them as $Values.Options.
   5. Fails if a placeholder is still found in a text file or path; .template is kept so the setup can be rerun.
+     Placeholders contained in their own value (e.g. @Kentico/team -> @Kentico/team-leads) are not checked.
   6. Deletes the .template folder.
 
 .PARAMETER ProjectName
-  Required. Name of the main project and NuGet package, e.g. Kentico.Xperience.CoolProject (dot-separated identifiers).
+  Required. Name of the main project and package, e.g. Kentico.Xperience.CoolProject (dot-separated identifiers).
 .PARAMETER RepositoryName
-  GitHub repository name. Default: derived from ProjectName
-  (Kentico.Xperience.CoolProject -> xperience-by-kentico-cool-project).
+  GitHub repository name: lowercase letters and digits, words separated by hyphens. Default: derived from the ProjectName
+  and repositoryNamePrefix from the placeholder files (Kentico.Xperience.CoolProject -> cool-project, Kentico.Xperience.AIRAConnector -> aira-connector).
 .PARAMETER OwnerTeam
   Required. GitHub team or user that owns the new repository, written into CODEOWNERS, e.g. @Kentico/platform-engineering.
 .PARAMETER HookOptions
@@ -32,7 +35,7 @@
 #Requires -Version 7.4
 param (
     [Parameter(Mandatory)][ValidatePattern('^[A-Za-z]\w*(\.[A-Za-z]\w*)*$')][string]$ProjectName,
-    [string]$RepositoryName,
+    [ValidatePattern('^[a-z0-9]+(-[a-z0-9]+)*$', Options = 'None')][string]$RepositoryName,   # 'None' makes the pattern case-sensitive
     [Parameter(Mandatory)][ValidatePattern('^@[\w-]+(/[\w-]+)?$')][string]$OwnerTeam,
     [hashtable]$HookOptions = @{}
 )
@@ -41,8 +44,19 @@ $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true   # a failing native command (dotnet, git, ...) in a hook stops the setup
 Set-Location "$PSScriptRoot\.."
 
+$placeholderFiles = foreach ($file in Get-ChildItem .template/placeholders/*.json | Sort-Object Name) { Get-Content $file -Raw | ConvertFrom-Json }
+$prefix = ''
+foreach ($data in $placeholderFiles) {
+    if ($data.PSObject.Properties.Name -contains 'repositoryNamePrefix') { $prefix = [string]$data.repositoryNamePrefix }
+}
+
 $shortName = ($ProjectName -split '\.')[-1]
-if (-not $RepositoryName) { $RepositoryName = 'xperience-by-kentico-' + ($shortName -creplace '(?<!^)([A-Z])', '-$1').ToLowerInvariant() }
+if (-not $RepositoryName) {
+    # split words before an upper-case letter that follows a lower-case letter or digit, or that starts a word after an acronym
+    $derived = $prefix + ($shortName -creplace '(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])', '-').ToLowerInvariant()
+    if ($derived -cnotmatch '^[a-z0-9]+(-[a-z0-9]+)*$') { throw "Cannot derive a valid repository name from '$ProjectName' ('$derived'); pass -RepositoryName." }
+    $RepositoryName = $derived
+}
 
 $values = @{
     ProjectName           = $ProjectName
@@ -51,15 +65,16 @@ $values = @{
     ProjectShortNameLower = $shortName.ToLowerInvariant()
     RepositoryName        = $RepositoryName
     OwnerTeam             = $OwnerTeam
+    Year                  = [string](Get-Date).Year
     Options               = $HookOptions
 }
 
 # 1. Placeholder pairs
 $pairs = [ordered]@{}
-foreach ($file in Get-ChildItem .template/placeholders/*.json | Sort-Object Name) {
-    foreach ($pair in (Get-Content $file -Raw | ConvertFrom-Json).replace.PSObject.Properties) {
-        $value = $pair.Value
-        foreach ($token in 'ProjectName', 'ProjectNameDashed', 'ProjectShortName', 'ProjectShortNameLower', 'RepositoryName', 'OwnerTeam') {
+foreach ($data in $placeholderFiles) {
+    foreach ($pair in $data.replace.PSObject.Properties) {
+        $value = [string]$pair.Value
+        foreach ($token in 'ProjectName', 'ProjectNameDashed', 'ProjectShortName', 'ProjectShortNameLower', 'RepositoryName', 'OwnerTeam', 'Year') {
             $value = $value.Replace("{$token}", [string]$values[$token])
         }
         if ($value -and $value -cne $pair.Name) { $pairs[$pair.Name] = $value }   # identity pairs would only trip the leftover check
@@ -69,6 +84,7 @@ Write-Host "Values:"
 Write-Host "  ProjectName     $ProjectName"
 Write-Host "  RepositoryName  $RepositoryName$(if (-not $PSBoundParameters.ContainsKey('RepositoryName')) { '   (derived)' })"
 Write-Host "  OwnerTeam       $OwnerTeam"
+Write-Host "  Year            $($values.Year)"
 Write-Host "Placeholders:"
 $pairs.GetEnumerator() | ForEach-Object { Write-Host ("  {0} -> {1}" -f $_.Key, $_.Value) }
 
@@ -79,13 +95,15 @@ function Get-TextFiles {
     Get-ChildItem -Recurse -File -Force | Where-Object { $_.FullName -notmatch $excluded -and $_.Extension -in $textExtensions }
 }
 
-# 2. Replace in text files, keeping line endings
+# 2. Replace in text files, keeping line endings and the encoding
 foreach ($file in Get-TextFiles) {
-    $text = [IO.File]::ReadAllText($file.FullName)
+    # detects a byte order mark; files without one are read and written as UTF-8 without a BOM
+    $reader = [IO.StreamReader]::new($file.FullName, [Text.UTF8Encoding]::new($false), $true)
+    try { $text = $reader.ReadToEnd(); $encoding = $reader.CurrentEncoding } finally { $reader.Dispose() }
     $new = $text
     foreach ($pair in $pairs.GetEnumerator()) { $new = $new.Replace($pair.Key, $pair.Value) }
     if ($new -cne $text) {
-        [IO.File]::WriteAllText($file.FullName, $new)
+        [IO.File]::WriteAllText($file.FullName, $new, $encoding)
         Write-Host "Replaced in $($file.FullName)"
     }
 }
@@ -110,10 +128,11 @@ foreach ($hook in Get-ChildItem .template/hooks/*.ps1 -ErrorAction Ignore | Sort
     if ($LASTEXITCODE -ne 0) { throw "Hook $($hook.Name) exited with code $LASTEXITCODE." }
 }
 
-# 5. Verify that no placeholder remains
+# 5. Verify that no placeholder remains; a key contained in its own value would always be found
+$checkedKeys = @($pairs.Keys | Where-Object { -not $pairs[$_].Contains($_) })
 $leftovers = foreach ($file in Get-TextFiles) {
     $relative = [IO.Path]::GetRelativePath((Get-Location), $file.FullName)
-    foreach ($key in $pairs.Keys) {
+    foreach ($key in $checkedKeys) {
         if ($relative.Contains($key)) { "$relative (path)" }
         if ([IO.File]::ReadAllText($file.FullName).Contains($key)) { "$relative`: $key" }
     }
